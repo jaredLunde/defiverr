@@ -13,7 +13,6 @@ export const errorCode = {
 export const messages = {
   [errorCode.sql.duplicateKey]: `{{#label}} already exists`,
   [errorCode.sql.notFound]: `{{#label}} not found`,
-
   [errorCode.password.incorrect]: `{{#label}} is incorrect`,
 } as const;
 

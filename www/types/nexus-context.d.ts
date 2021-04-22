@@ -1,9 +1,9 @@
-import type {Request, Response} from 'express';
+import {NextApiRequest, NextApiResponse} from 'next';
 
 export interface NexusContext {
-  req: Request;
-  res: Response;
-  select: {
-    select: Record<string, never>;
-  };
+  req: NextApiRequest;
+  res: NextApiResponse;
+  db: NextApiRequest['db'];
+  secrets: NextApiRequest['secrets'];
+  viewer: NextApiRequest['viewer'];
 }

@@ -1,7 +1,6 @@
 // @see https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["nativeTypes"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -10,55 +9,54 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
-  password      String?
-  encryptionKey String
-  role          UserRole   @default(user)
-  status        UserStatus @default(inactive)
-  plan          UserPlan   @default(free)
-  name          Json?
-  avatar        Json?
-  bio           String?
-  shortBio      String?
-  homepage      String?
-  location      String?
-  createdIp     String
-  latestIp      String
-  createdAt     DateTime   @default(now())
-  activeAt      DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  deletedAt     DateTime?
+  id               String           @id @default(cuid())
+  walletAddress    String
+  email            String?
+  encryptionKey    String
+  role             UserRole         @default(user)
+  status           UserStatus       @default(unconfirmed)
+  plan             UserPlan         @default(free)
+  sellerLevel      SellerLevel      @default(basic)
+  buyerLevel       BuyerLevel       @default(basic)
+  name             Json?
+  avatar           Json?
+  bio              String?
+  shortBio         String?
+  homepage         String?
+  location         String?
+  skills           String[]
+  createdIp        String
+  latestIp         String
+  createdAt        DateTime         @default(now())
+  activeAt         DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+  languages        UserLanguage[]
+  gigs             Gig[]
+  gigReviews       GigReview[]
+  gigOrders        GigOrder[]
+  savedGigs        SavedGig[]
+  sentMessages     Message[]        @relation("sentMessages")
+  receivedMessages Message[]        @relation("receivedMessages")
+  flaggedContent   FlaggedContent[]
 
-  oAuthProviders OAuthProviders[]
-  @@index([email])
-  @@index([plan])
+  @@index([walletAddress])
+  @@index([sellerLevel])
+  @@index([skills])
   @@index([createdAt])
 }
 
-model OAuthProviders {
-  userId    String
-  provider  OAuthProvider
-  token     String
-  expires   Int
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  owner     User          @relation(fields: [userId], references: [id])
-
-  @@id([userId, provider])
-}
-
 enum UserRole {
-  superAdmin
-  admin
-  superModerator
-  moderator
   user
+  moderator
+  superModerator
+  admin
+  superAdmin
 }
 
 enum UserStatus {
-  active
-  inactive
+  unconfirmed
+  confirmed
   banned
   deleted
 }
@@ -67,9 +65,193 @@ enum UserPlan {
   free
 }
 
-enum OAuthProvider {
-  bitbucket
-  github
-  gitlab
-  google
+enum SellerLevel {
+  basic
+  super
+}
+
+enum BuyerLevel {
+  basic
+  super
+}
+
+model Language {
+  // ISO-639-1 language code
+  code       String            @id
+  name       String[]
+  nativeName String[]
+  direction  LanguageDirection @default(ltr)
+  spokenBy   UserLanguage[]
+}
+
+enum LanguageDirection {
+  ltr
+  rtl
+}
+
+model UserLanguage {
+  id           String   @id @default(cuid())
+  languageCode String
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  language     Language @relation(fields: [languageCode], references: [code])
+}
+
+model Gig {
+  id           String      @id @default(cuid())
+  sellerId     String
+  title        String
+  about        String
+  // Delivery time in hours
+  deliveryTime Int
+  price        Decimal     @db.Decimal(36, 18)
+  status       GigStatus
+  previews     Json[]
+  tags         String[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime?
+  seller       User        @relation(fields: [sellerId], references: [id])
+  faq          GigFaq[]
+  reviews      GigReview[]
+  orders       GigOrder[]
+  saved        SavedGig[]
+  threads      Thread[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([deliveryTime])
+  @@index([tags])
+}
+
+enum GigStatus {
+  inactive
+  active
+  banned
+  deleted
+}
+
+model GigReview {
+  id                  String   @id @default(cuid())
+  gigId               String
+  reviewerId          String
+  content             String
+  // Seller communication rating 1-5
+  communicationRating Int      @db.SmallInt
+  // Quality of work rating 1-5
+  qualityRating       Int      @db.SmallInt
+  // Value of work rating 1-5
+  valueRating         Int      @db.SmallInt
+  // Description accuracy rating 1-5
+  accuracyRating      Int      @db.SmallInt
+  createdAt           DateTime @default(now())
+  gig                 Gig      @relation(fields: [gigId], references: [id])
+  reviewer            User     @relation(fields: [reviewerId], references: [id])
+
+  @@index([gigId])
+  @@index([reviewerId])
+}
+
+model GigOrder {
+  id          String         @id @default(cuid())
+  gigId       String
+  buyerId     String
+  price       Decimal        @db.Decimal(36, 18)
+  status      GigOrderStatus @default(pending)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deliveredAt DateTime?
+  canceledAt  DateTime?
+  gig         Gig            @relation(fields: [gigId], references: [id])
+  buyer       User           @relation(fields: [buyerId], references: [id])
+
+  @@index([gigId])
+  @@index([buyerId])
+  @@index([deliveredAt])
+}
+
+enum GigOrderStatus {
+  pending
+  confirmedBySeller
+  inProgress
+  delivered
+}
+
+model SavedGig {
+  id        String   @id @default(cuid())
+  gigId     String
+  buyerId   String
+  createdAt DateTime @default(now())
+  gig       Gig      @relation(fields: [gigId], references: [id])
+  buyer     User     @relation(fields: [buyerId], references: [id])
+}
+
+model GigFaq {
+  id        String   @id @default(cuid())
+  gigId     String
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  gig       Gig      @relation(fields: [gigId], references: [id])
+}
+
+model Thread {
+  id        String    @id @default(cuid())
+  gigId     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
+  gig       Gig       @relation(fields: [gigId], references: [id])
+  messages  Message[]
+
+  @@index([gigId])
+  @@index([updatedAt])
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  threadId    String
+  senderId    String
+  receiverId  String
+  content     String
+  attachments Json[]
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+  readAt      DateTime?
+  thread      Thread    @relation(fields: [threadId], references: [id])
+  sender      User      @relation("sentMessages", fields: [senderId], references: [id])
+  receiver    User      @relation("receivedMessages", fields: [receiverId], references: [id])
+
+  @@index([threadId])
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+model FlaggedContent {
+  id          String               @id @default(cuid())
+  userId      String
+  contentId   String
+  contentType FlaggedContentType
+  reason      FlaggedContentReason
+  moreInfo    String
+  createdAt   DateTime             @default(now())
+  user        User                 @relation(fields: [userId], references: [id])
+
+  @@index([reason])
+  @@index([contentId])
+  @@index([contentType])
+}
+
+enum FlaggedContentReason {
+  scam
+  spam
+  offensive
+  illegal
+}
+
+enum FlaggedContentType {
+  message
+  gig
+  gigReview
+  user
 }
