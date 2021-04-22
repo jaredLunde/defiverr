@@ -1,0 +1,75 @@
+// @see https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["nativeTypes"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  password      String?
+  encryptionKey String
+  role          UserRole   @default(user)
+  status        UserStatus @default(inactive)
+  plan          UserPlan   @default(free)
+  name          Json?
+  avatar        Json?
+  bio           String?
+  shortBio      String?
+  homepage      String?
+  location      String?
+  createdIp     String
+  latestIp      String
+  createdAt     DateTime   @default(now())
+  activeAt      DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+
+  oAuthProviders OAuthProviders[]
+  @@index([email])
+  @@index([plan])
+  @@index([createdAt])
+}
+
+model OAuthProviders {
+  userId    String
+  provider  OAuthProvider
+  token     String
+  expires   Int
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  owner     User          @relation(fields: [userId], references: [id])
+
+  @@id([userId, provider])
+}
+
+enum UserRole {
+  superAdmin
+  admin
+  superModerator
+  moderator
+  user
+}
+
+enum UserStatus {
+  active
+  inactive
+  banned
+  deleted
+}
+
+enum UserPlan {
+  free
+}
+
+enum OAuthProvider {
+  bitbucket
+  github
+  gitlab
+  google
+}

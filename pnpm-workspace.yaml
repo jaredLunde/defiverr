@@ -1,0 +1,3 @@
+packages:
+  - "infrastructure"
+  - "www"

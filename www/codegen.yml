@@ -1,0 +1,9 @@
+schema: http://localhost:3000/api/graphql
+overwrite: true
+documents: graphql/**/*.graphql
+generates:
+  graphql/hooks.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-urql
