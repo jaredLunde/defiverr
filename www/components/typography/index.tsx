@@ -5,7 +5,7 @@ import {responsiveStyles, mq} from '@/styles';
  */
 export const typography = responsiveStyles({
   default: mq({
-    default: ({elevation, radius, font, color}) => ({
+    default: ({shadow, radius, font, color}) => ({
       color: color.text,
       textRendering: 'optimizeSpeed',
 
@@ -17,11 +17,14 @@ export const typography = responsiveStyles({
         color: color.primary,
         textDecoration: 'none',
         textDecorationSkipInk: 'all',
+
         'strong,b': {
-          fontWeight: 'inherit',
-          color: color.teal900,
+          fontWeight: 700,
         },
+
         ':hover': {
+          cursor: 'pointer',
+          textDecoration: 'underline',
           color: color.primaryHover,
         },
       },
@@ -100,7 +103,7 @@ export const typography = responsiveStyles({
         fontFamily: font.family.mono,
         color: color.blue900,
         backgroundColor: color.coolGray200,
-        boxShadow: elevation.inner,
+        boxShadow: shadow.inner,
         overflowX: 'auto',
       },
       'pre code': {

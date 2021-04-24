@@ -113,8 +113,8 @@ export const toggleSwitch = Object.assign(
       }),
     }),
 
-    focused: ({elevation}) => ({
-      boxShadow: elevation.outline,
+    focused: ({shadow}) => ({
+      boxShadow: shadow.outline,
     }),
 
     disabled: {

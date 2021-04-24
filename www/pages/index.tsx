@@ -1,67 +1,126 @@
 import Head from 'next/head';
 import {GetStaticProps} from 'next';
 import {FormattedMessage} from 'react-intl';
-import styles from '../styles/Home.module.css';
+import {text} from '@/components/text';
+import {Hero} from '@/components/hero';
+import {Button} from '@/components/button';
+import {cluster, column, layer, row} from '@/styles/layout';
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Create Next App</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          <FormattedMessage id='hello' values={{name: 'Jared'}} />
+      <header
+        className={row({
+          align: 'center',
+          distribute: 'between',
+          bg: 'white',
+          pad: ['sm', 'md'],
+        })}
+      >
+        <h1
+          className={text({
+            font: 'brand',
+            size: '3xl',
+            color: 'blueGray900',
+            tracking: 'tighter',
+            leading: 'normal',
+            weight: '700',
+          })}
+        >
+          defiverr
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href='https://nextjs.org/docs' className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href='https://nextjs.org/learn' className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href='https://github.com/vercel/next.js/tree/master/examples'
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href='https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        <div className={layer({placement: 'center'})}>
+          <div className={row({gap: 'xl'})}>
+            <a
+              className={text({
+                leading: 'none',
+                weight: '600',
+                color: 'textAccent',
+              })}
+              href='/'
+            >
+              Earn crypto
+            </a>
+            <a
+              className={text({
+                leading: 'none',
+                weight: '600',
+                color: 'textAccent',
+              })}
+              href='/'
+            >
+              Hire freelancers
+            </a>
+            <a
+              className={text({
+                leading: 'none',
+                weight: '600',
+                color: 'textAccent',
+              })}
+              href='/'
+            >
+              About
+            </a>
+          </div>
         </div>
-      </main>
 
-      <footer className={styles.footer}>
-        <a
-          href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
+        <Button>Get started</Button>
+      </header>
+
+      <Hero>
+        <div
+          className={column({
+            width: {min: '100vw', md: 640},
+            gap: 'xl',
+            pad: 'xl',
+          })}
         >
-          Powered by{' '}
-          <img src='/vercel.svg' alt='Vercel Logo' className={styles.logo} />
-        </a>
-      </footer>
+          <div
+            className={column({gap: 'md'})}
+            style={{mixBlendMode: 'hard-light'}}
+          >
+            <h1
+              className={text({
+                size: {min: '4xl', sm: '5xl', md: '6xl'},
+                color: 'blueGray900',
+                tracking: 'tighter',
+                leading: 'tight',
+                weight: '700',
+                align: 'center',
+              })}
+            >
+              Hire the best freelance talent in the world
+            </h1>
+
+            <h2
+              className={text({
+                color: 'blueGray900',
+                size: 'xl',
+                leading: 'normal',
+                align: 'center',
+              })}
+            >
+              The easiest way to hire the world&apos;s top designers, digital
+              marketers, and developers who want to get paid in cryptocurrency
+            </h2>
+          </div>
+
+          <div>
+            <div className={cluster({gap: 'lg', distribute: 'center'})}>
+              <Button size='md'>Find a professional</Button>
+              <Button size='md' variant='secondary'>
+                Sell your craft for crypto
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Hero>
     </div>
   );
 }

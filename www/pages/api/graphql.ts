@@ -2,17 +2,19 @@ import path from 'path';
 import {NextApiRequest, NextApiResponse} from 'next';
 import * as nexus from 'nexus';
 import {PrismaClient} from '@prisma/client';
-import {ApolloServer} from 'apollo-server-micro';
+import {ApolloServer, gql} from 'apollo-server-micro';
 import * as jwt from 'jsonwebtoken';
 import {camelCase} from 'change-case';
 import {fieldValidatePlugin} from '@/graphql/api/nexus-plugin-validate';
 import {jwtConfig, jwtCookieName} from '@/graphql/api/jwt';
 import type {JwtData} from '@/graphql/api/jwt';
+import * as scalars from '@/graphql/api/scalars';
+import * as users from '@/graphql/api/users';
 import type {NexusGenFieldTypes} from '../../types/nexus';
 
 const apolloServer = new ApolloServer({
   schema: nexus.makeSchema({
-    types: [],
+    types: [...scalars.types, ...users.types],
     contextType: {
       module: path.join(process.cwd(), 'types', 'nexus-context.d.ts'),
       export: 'NexusContext',
@@ -34,7 +36,7 @@ const apolloServer = new ApolloServer({
     tabs: [
       {
         endpoint: '/api/graphql',
-        query: `{ok}`,
+        query: `{ users { id } }`,
       },
     ],
   },

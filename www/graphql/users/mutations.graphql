@@ -1,0 +1,88 @@
+mutation authenticate {
+  authenticate {
+    id
+    walletAddress
+    email
+    role
+    status
+    plan
+    name
+    avatar
+    bio
+    shortBio
+    homepage
+    location
+    createdAt
+  }
+}
+
+mutation signUp($walletAddress: String!) {
+  signUp(walletAddress: $walletAddress) {
+    id
+    walletAddress
+    email
+    role
+    status
+    plan
+    name
+    avatar
+    bio
+    shortBio
+    homepage
+    location
+    createdAt
+  }
+}
+
+mutation logIn($walletAddress: String!) {
+  logIn(walletAddress: $walletAddress) {
+    id
+    walletAddress
+    email
+    role
+    status
+    plan
+    name
+    avatar
+    bio
+    shortBio
+    homepage
+    location
+    createdAt
+  }
+}
+
+mutation updateProfile(
+  $id: String!
+  $name: String
+  $shortBio: String
+  $homepage: String
+  $location: String
+) {
+  updateProfile(
+    id: $id
+    name: $name
+    shortBio: $shortBio
+    homepage: $homepage
+    location: $location
+  ) {
+    id
+    email
+    role
+    status
+    plan
+    name
+    avatar
+    bio
+    shortBio
+    homepage
+    location
+    createdAt
+  }
+}
+
+mutation updateEmail($id: String!, $email: String!) {
+  updateEmail(id: $id, email: $email) {
+    id
+  }
+}

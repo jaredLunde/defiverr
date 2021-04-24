@@ -1,19 +1,17 @@
 import * as React from 'react';
-import forwardRefAs from 'forward-ref-as';
 import clsx from 'clsx';
 import {styles} from '@/styles';
 
 /**
  *
  */
-export const Badge = forwardRefAs<'span', BadgeProps>(function Badge(
-  {as: As = 'span', variant = 'info', className, ...props},
-  ref
-) {
-  return (
-    <As ref={ref} className={clsx(className, badge(variant))} {...props} />
-  );
-});
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  function Badge({variant = 'info', className, ...props}, ref) {
+    return (
+      <span ref={ref} className={clsx(className, badge(variant))} {...props} />
+    );
+  }
+);
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   /**

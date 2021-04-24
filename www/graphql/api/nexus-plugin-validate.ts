@@ -59,10 +59,7 @@ export function fieldValidatePlugin() {
 }
 
 const FieldValidateResolverImport = core.printedGenTypingImport({
-  module: path.relative(
-    path.join(__dirname, '../../types'),
-    __filename.replace('.ts', '')
-  ),
+  module: '../graphql/api/nexus-plugin-validate',
   bindings: ['FieldValidateResolver'],
 });
 

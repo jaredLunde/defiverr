@@ -3,6 +3,11 @@ overwrite: true
 documents: graphql/**/*.graphql
 generates:
   graphql/hooks.ts:
+    config:
+      strictScalars: true
+      scalars:
+        Date: Date
+        JSON: String
     plugins:
       - typescript
       - typescript-operations

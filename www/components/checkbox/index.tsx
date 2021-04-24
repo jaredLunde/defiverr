@@ -80,10 +80,10 @@ export const checkbox = Object.assign(
     }),
 
     unchecked: mq({
-      default: ({color, transition, elevation}) => ({
+      default: ({color, transition, shadow}) => ({
         backgroundColor: color.indigo100,
         transitionDelay: transition.duration.fast,
-        boxShadow: elevation.inner,
+        boxShadow: shadow.inner,
         '[disabled] ~ &': {
           boxShadow: 'none',
         },
@@ -114,8 +114,8 @@ export const checkbox = Object.assign(
       }),
     }),
 
-    focused: ({elevation}) => ({
-      boxShadow: elevation.outline,
+    focused: ({shadow}) => ({
+      boxShadow: shadow.outline,
     }),
 
     disabled: {

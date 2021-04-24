@@ -1,9 +1,10 @@
 import * as React from 'react';
 import type {FieldError} from 'react-hook-form';
-import {Column, Row} from '@dash-ui/react-layout';
 import useId from '@accessible/use-id';
-import {Text} from '@/components/text';
-import {Icon} from '@/components/icon';
+import {text} from '@/components/text';
+import {column, row} from '@/styles/layout';
+
+// import {Icon} from '@/components/icon';
 // import AlertCircleIcon from '@/public/icons/alert-circle.svg';
 
 /**
@@ -25,7 +26,6 @@ export function YupError({
   name = children.props.name,
 }: YupErrorProps) {
   const id = useId();
-  console.log('wtf??', id);
   const error = errors[name];
   let errorMessage: YupError<any> | string | undefined;
 
@@ -43,7 +43,7 @@ export function YupError({
       : messageComponent.default;
 
   return (
-    <Column gap='sm'>
+    <div className={column({gap: 'sm'})}>
       {error
         ? React.cloneElement(children, {
             'aria-invalid': true,
@@ -52,15 +52,15 @@ export function YupError({
         : children}
 
       {!!errorMessage && (
-        <Row id={id} align='start' gap='sm'>
+        <div className={row({align: 'start', gap: 'sm'})} id={id}>
           {/* <Icon
             render={AlertCircleIcon}
             color='orange600'
             style={{top: '0.25em'}}
          />*/}
 
-          <Text
-            size='xs'
+          <span
+            className={text({size: 'xs'})}
             aria-label={
               typeof errorMessage === 'object'
                 ? errorMessage['aria-label']
@@ -68,10 +68,10 @@ export function YupError({
             }
           >
             <ErrorComponent message={errorMessage} />
-          </Text>
-        </Row>
+          </span>
+        </div>
       )}
-    </Column>
+    </div>
   );
 }
 

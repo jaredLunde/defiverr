@@ -1,37 +1,5 @@
-import * as React from 'react';
-import {Box} from '@dash-ui/react-layout';
-import type {BoxProps} from '@dash-ui/react-layout';
-import forwardRefAs from 'forward-ref-as';
-import clsx from 'clsx';
 import {styles, responsiveStyles} from '@/styles';
-import type {ResponsiveProp} from '@/styles';
 import {typography, em} from '@/components/typography';
-/**
- * A component for long form writing where you want the default
- * typography styles to have precendent and you do not want to
- * manage spacing on your own, e.g. Markdown.
- */
-export const Prose = forwardRefAs<'article', ProseProps>(function Prose(
-  {variant = 'sm', className, ...props},
-  ref
-) {
-  return (
-    <Box
-      as='article'
-      ref={ref as any}
-      className={clsx(className, prose(variant))}
-      {...props}
-    />
-  );
-});
-
-export interface ProseProps extends BoxProps {
-  /**
-   * Select a prose variant
-   * @default "sm"
-   */
-  variant?: ResponsiveProp<keyof typeof prose.styles>;
-}
 
 /**
  * Responsive styles for adding spacing to prose

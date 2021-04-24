@@ -1,11 +1,16 @@
 import {createStyles} from '@dash-ui/styles';
 import responsive from '@dash-ui/responsive';
 import dashMq from '@dash-ui/mq';
-import {LayoutProvider} from '@dash-ui/react-layout';
 import {DashProvider} from '@dash-ui/react';
-import type {Responsive} from '@dash-ui/responsive';
+import type {
+  Responsive,
+  ResponsiveStyle,
+  ResponsiveOne,
+  ResponsiveLazy,
+} from '@dash-ui/responsive';
 import type {MediaQueries} from '@dash-ui/react-layout';
-import type {DashTokens} from '@dash-ui/styles';
+import type {DashTokens, Style, StylesOne, StylesLazy} from '@dash-ui/styles';
+
 // import css from 'minify-css.macro';
 
 /**
@@ -298,6 +303,7 @@ const colorSystem = {
 export const tokens = {
   font: {
     family: {
+      brand: [`Caveat`, `Inter`].map((s) => `"${s}"`).join(','),
       sans: [
         `Inter`,
         `system-ui`,
@@ -376,14 +382,15 @@ export const tokens = {
 
   radius: {
     none: '0',
-    primary: '0.25rem',
+    primary: '0.375rem',
     sm: '0.125rem',
+    base: '0.25rem',
     md: '0.375rem',
     lg: '0.5rem',
     full: 10000 / 16 + 'rem',
   },
 
-  elevation: {
+  shadow: {
     none: 'none',
     xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -439,7 +446,7 @@ export const tokens = {
     },
   },
 
-  zIndexes: {
+  zIndex: {
     min: 0,
     lower: 1,
     low: 10,
@@ -464,17 +471,24 @@ export const tokens = {
     translucentLight: 'rgba(245, 245, 252, 0.33)',
     translucentDark: 'rgba(40, 40, 48, 0.15)',
     translucentContrast: 'rgba(40, 40, 48, 0.15)',
-    bodyBg: 'hsl(212, 56%, 92%)',
+    bodyBg: colorSystem.white,
 
-    text: colorSystem.coolGray800,
-    textAccent: colorSystem.coolGray500,
-    textAccentLight: colorSystem.coolGray900,
+    text: colorSystem.blueGray800,
+    textAccent: colorSystem.blueGray600,
+    textAccentLight: colorSystem.blueGray900,
 
-    primary: colorSystem.indigo600,
-    primaryHover: colorSystem.indigo700,
-    primaryActive: colorSystem.indigo800,
+    primary: colorSystem.blue700,
+    primaryHover: colorSystem.blue800,
+    primaryActive: colorSystem.blue900,
 
-    accent: 'hsl(212, 34%, 80%)',
+    secondary:
+      'hsl(224.7457627118644, 54.128440366972484%, 18.372549019607842%)',
+    secondaryHover:
+      'hsl(224.7457627118644, 54.128440366972484%, 28.372549019607842%)',
+    secondaryActive:
+      'hsl(224.7457627118644, 54.128440366972484%, 21.372549019607842%)',
+
+    accent: 'hsl(252, 58%, 95%)',
     accentHover: 'hsl(212, 34%, 82%)',
     accentActive: 'hsl(212, 34%, 84%)',
   },
@@ -501,13 +515,7 @@ export const styles = createStyles({
  * Set up the context providers used by Dash
  */
 export function StylesProvider({children}: {children: React.ReactNode}) {
-  return (
-    <DashProvider styles={styles}>
-      <LayoutProvider styles={styles} mediaQueries={mediaQueries}>
-        {children}
-      </LayoutProvider>
-    </DashProvider>
-  );
+  return <DashProvider styles={styles}>{children}</DashProvider>;
 }
 
 /**
@@ -518,14 +526,65 @@ export type ResponsiveProp<Variant> =
   | Variant
   | Responsive<Variant, MediaQueries>;
 
+/**
+ * A function for creating compound/multi-variant styles
+ */
+export function compoundStyles<
+  Keys extends string,
+  T extends Record<
+    Keys,
+    | ResponsiveStyle<any, any, any>
+    | Style<any>
+    | StylesOne
+    | ResponsiveOne<any>
+    | StylesLazy<any>
+    | ResponsiveLazy<any, any>
+  >,
+  StyleMap extends {[Name in keyof T]: T[Name]}
+>(styleMap: StyleMap) {
+  const cache: Record<string, string[]> = {};
+
+  function css(
+    compoundMap: {[Name in keyof StyleMap]?: Parameters<StyleMap[Name]>[0]}
+  ): string[] {
+    const key = JSON.stringify(compoundMap);
+
+    if (cache[key]) {
+      return cache[key];
+    }
+
+    const map = {default: true, ...compoundMap};
+    const keys = Object.keys(map);
+    const value = keys.map((key) => {
+      const value = (map as any)[key];
+      if (value === void 0 || value === null) return '';
+      return (styleMap as any)[key]?.css(value);
+    });
+
+    return (cache[key] = value);
+  }
+
+  return Object.assign(
+    function compoundStyle(
+      compoundMap: {[Name in keyof StyleMap]?: Parameters<StyleMap[Name]>[0]}
+    ) {
+      return styles.join(...css(compoundMap));
+    },
+    {
+      css(
+        compoundMap: {[Name in keyof StyleMap]?: Parameters<StyleMap[Name]>[0]}
+      ) {
+        return css(compoundMap).join('');
+      },
+      styles: styleMap,
+    }
+  );
+}
+
 type AppTokens = typeof tokens & {vh: string};
 type AppThemes = typeof themes;
 
 declare module '@dash-ui/styles' {
   export interface DashTokens extends AppTokens {}
   export interface DashThemes extends AppThemes {}
-}
-
-declare module '@dash-ui/react-layout' {
-  export interface MediaQueries extends AppMediaQueries {}
 }

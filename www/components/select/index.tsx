@@ -269,7 +269,7 @@ export const Select = Object.assign(
 export const selectStyles = styles({
   root: (t) => ({
     '> select:focus ~ .select-label': {
-      boxShadow: t.elevation.outline,
+      boxShadow: t.shadow.outline,
     },
 
     '.select-label': {
@@ -301,7 +301,7 @@ export const selectStyles = styles({
   menu: (t) => ({
     backgroundColor: t.color.bodyBg,
     border: `${t.borderWidth.hairline} solid ${t.color.accent}`,
-    boxShadow: t.elevation.sm,
+    boxShadow: t.shadow.sm,
     overflow: 'auto',
     maxHeight: '80vh',
     zIndex: t.zIndexes.max,

@@ -1,46 +1,33 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import forwardRefAs from 'forward-ref-as';
-import {Row} from '@dash-ui/react-layout';
+import {row} from '@/styles/layout';
 import {responsiveStyles, styles, mq} from '@/styles';
 import type {ResponsiveProp} from '@/styles';
 
-/**
- * An accessible component for creating button styles from variants and
- * design tokens. This is a `<button>` by default, but this can
- * be overriden with the `as` prop. Regardless of the node type, this
- * button will be accessible to screen readers.
- */
-export const Button = forwardRefAs<'button', ButtonProps>(function Button(
-  {
-    as: As = 'button',
-    variant = 'primary',
-    fetching,
-    className,
-    children,
-    ...props
-  },
-  ref
-) {
-  const buttonProps = useA11yButton(props);
-  return (
-    <As
-      ref={ref}
-      className={clsx(className, {fetching}, button(variant))}
-      {...(As === 'button' ? props : buttonProps)}
-    >
-      {fetching ? (
-        <Row align='center' gap='xs' height='1em'>
-          <span className={loader('first')} />
-          <span className={loader('second')} />
-          <span className={loader('third')} />
-        </Row>
-      ) : (
-        children
-      )}
-    </As>
-  );
-});
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  function Button(
+    {variant = 'primary', fetching, size = 'sm', className, children, ...props},
+    ref
+  ) {
+    return (
+      <button
+        ref={ref}
+        className={clsx(className, {fetching}, button(variant, size))}
+        {...props}
+      >
+        {fetching ? (
+          <span className={row({align: 'center', gap: 'xs', height: '1em'})}>
+            <span className={loader('first')} />
+            <span className={loader('second')} />
+            <span className={loader('third')} />
+          </span>
+        ) : (
+          children
+        )}
+      </button>
+    );
+  }
+);
 
 export function useA11yButton<P>(
   props: P
@@ -72,12 +59,14 @@ export function useA11yButton<P>(
   };
 }
 
-export interface ButtonProps {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * Select a button variant
    * @default "primary"
    */
-  variant?: ResponsiveProp<keyof typeof button.styles>;
+  variant?: ResponsiveProp<'primary' | 'secondary'>;
+  size?: ResponsiveProp<'sm' | 'md' | 'lg'>;
   fetching?: boolean;
 }
 
@@ -110,22 +99,18 @@ export const button = responsiveStyles({
   /**
    * The default variant adds shared styles to the button
    */
-  default: ({font, elevation, transition, radius, color}) => ({
+  default: ({font, shadow, transition, radius, color}) => ({
     ...resetVendorButtonStyles,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
     lineHeight: font.leading.none,
     userSelect: 'none',
-    fontSize: '0.92em',
+    fontSize: font.size.sm,
     fontWeight: 600,
-    letterSpacing: font.tracking.wide,
-    padding: `${10 / 16}rem ${20 / 16}rem`,
+    padding: `${10 / 16}rem ${14 / 16}rem`,
     borderRadius: radius.primary,
-    boxShadow: elevation.md,
-    // The border here ensures we get the same size/positioning as
-    // the outline button
-    border: '1px solid transparent',
+    boxShadow: shadow.md,
     transitionProperty: 'background-color, box-shadow',
     transitionDuration: transition.duration.fast,
     transitionTimingFunction: transition.timing.inOut,
@@ -142,7 +127,7 @@ export const button = responsiveStyles({
     },
 
     ':focus-visible': {
-      boxShadow: elevation.outline,
+      boxShadow: shadow.outline,
     },
   }),
 
@@ -151,31 +136,43 @@ export const button = responsiveStyles({
       backgroundColor: color.primary,
       color: color.white,
     }),
-    hover: ({color, elevation}) => ({
+    hover: ({color, shadow}) => ({
       '&:hover:not([disabled]):not(.fetching)': {
         backgroundColor: color.primaryHover,
       },
       '&:active:not([disabled]):not(.fetching)': {
         backgroundColor: color.primaryActive,
-        boxShadow: elevation.xs,
+        boxShadow: shadow.xs,
       },
     }),
   }),
 
   secondary: mq({
     default: ({color}) => ({
-      backgroundColor: color.accent,
-      color: color.gray100,
+      backgroundColor: color.secondary,
+      color: color.white,
     }),
-    hover: ({color, elevation}) => ({
+    hover: ({color, shadow}) => ({
       '&:hover:not([disabled]):not(.fetching)': {
-        backgroundColor: color.accentHover,
+        backgroundColor: color.secondaryHover,
       },
       '&:active:not([disabled]):not(.fetching)': {
-        backgroundColor: color.accentActive,
-        boxShadow: elevation.xs,
+        backgroundColor: color.secondaryActive,
+        boxShadow: shadow.xs,
       },
     }),
+  }),
+
+  sm: {},
+
+  md: ({font}) => ({
+    fontSize: font.size.base,
+    padding: `${14 / 16}rem ${22 / 16}rem`,
+  }),
+
+  lg: ({font}) => ({
+    fontSize: font.size.lg,
+    padding: `${22 / 16}rem ${30 / 16}rem`,
   }),
 });
 

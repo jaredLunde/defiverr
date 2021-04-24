@@ -2,6 +2,61 @@
 ### Do not make changes to this file directly
 
 
+interface BaseViewer {
+  avatar: JSON
+  bio: String
+  createdAt: Date!
+  email: String!
+  homepage: String
+  id: ID!
+  location: String
+  name: JSON
+  plan: String!
+  role: String!
+  shortBio: String
+  status: String!
+  walletAddress: String!
+}
+
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Mutation {
+  authenticate: Viewer
+  logIn(walletAddress: String!): Viewer
+  signUp(walletAddress: String!): Viewer
+  updateEmail(email: String!, id: String!): Viewer
+  updateProfile(homepage: String, id: String!, location: String, name: String, shortBio: String): Viewer
+}
+
 type Query {
-  ok: Boolean!
+  users(skip: Int, take: Int): [User]
+}
+
+type User {
+  id: ID
+  name: JSON
+}
+
+type Viewer implements BaseViewer {
+  avatar: JSON
+  bio: String
+  createdAt: Date!
+  email: String!
+  homepage: String
+  id: ID!
+  location: String
+  name: JSON
+  plan: String!
+  role: String!
+  shortBio: String
+  status: String!
+  walletAddress: String!
 }

@@ -4,8 +4,45 @@
  */
 
 import {FieldAuthorizeResolver} from 'nexus/dist/plugins/fieldAuthorizePlugin';
-import {FieldValidateResolver} from '../pages/api/graphql.js';
+import {core} from 'nexus';
+import {FieldValidateResolver} from '../graphql/api/nexus-plugin-validate';
 import {NexusContext} from './nexus-context';
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(
+      fieldName: FieldName,
+      opts?: core.CommonInputFieldConfig<TypeName, FieldName>
+    ): void; // "Date";
+    /**
+     * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+     */
+    json<FieldName extends string>(
+      fieldName: FieldName,
+      opts?: core.CommonInputFieldConfig<TypeName, FieldName>
+    ): void; // "JSON";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(
+      fieldName: FieldName,
+      ...opts: core.ScalarOutSpread<TypeName, FieldName>
+    ): void; // "Date";
+    /**
+     * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+     */
+    json<FieldName extends string>(
+      fieldName: FieldName,
+      ...opts: core.ScalarOutSpread<TypeName, FieldName>
+    ): void; // "JSON";
+  }
+}
 
 declare global {
   interface NexusGen extends NexusGenTypes {}
@@ -21,39 +58,190 @@ export interface NexusGenScalars {
   Float: number;
   Boolean: boolean;
   ID: string;
+  Date: Date;
+  JSON: import('type-fest').JsonValue;
 }
 
 export interface NexusGenObjects {
+  Mutation: {};
   Query: {};
+  User: {
+    // root type
+    id?: string | null; // ID
+    name?: NexusGenScalars['JSON'] | null; // JSON
+  };
+  Viewer: {
+    // root type
+    avatar?: NexusGenScalars['JSON'] | null; // JSON
+    bio?: string | null; // String
+    createdAt: NexusGenScalars['Date']; // Date!
+    email: string; // String!
+    homepage?: string | null; // String
+    id: string; // ID!
+    location?: string | null; // String
+    name?: NexusGenScalars['JSON'] | null; // JSON
+    plan: string; // String!
+    role: string; // String!
+    shortBio?: string | null; // String
+    status: string; // String!
+    walletAddress: string; // String!
+  };
 }
 
-export interface NexusGenInterfaces {}
+export interface NexusGenInterfaces {
+  BaseViewer: NexusGenRootTypes['Viewer'];
+}
 
 export interface NexusGenUnions {}
 
-export type NexusGenRootTypes = NexusGenObjects;
+export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects;
 
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars;
 
 export interface NexusGenFieldTypes {
+  Mutation: {
+    // field return type
+    authenticate: NexusGenRootTypes['Viewer'] | null; // Viewer
+    logIn: NexusGenRootTypes['Viewer'] | null; // Viewer
+    signUp: NexusGenRootTypes['Viewer'] | null; // Viewer
+    updateEmail: NexusGenRootTypes['Viewer'] | null; // Viewer
+    updateProfile: NexusGenRootTypes['Viewer'] | null; // Viewer
+  };
   Query: {
     // field return type
-    ok: boolean; // Boolean!
+    users: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+  };
+  User: {
+    // field return type
+    id: string | null; // ID
+    name: NexusGenScalars['JSON'] | null; // JSON
+  };
+  Viewer: {
+    // field return type
+    avatar: NexusGenScalars['JSON'] | null; // JSON
+    bio: string | null; // String
+    createdAt: NexusGenScalars['Date']; // Date!
+    email: string; // String!
+    homepage: string | null; // String
+    id: string; // ID!
+    location: string | null; // String
+    name: NexusGenScalars['JSON'] | null; // JSON
+    plan: string; // String!
+    role: string; // String!
+    shortBio: string | null; // String
+    status: string; // String!
+    walletAddress: string; // String!
+  };
+  BaseViewer: {
+    // field return type
+    avatar: NexusGenScalars['JSON'] | null; // JSON
+    bio: string | null; // String
+    createdAt: NexusGenScalars['Date']; // Date!
+    email: string; // String!
+    homepage: string | null; // String
+    id: string; // ID!
+    location: string | null; // String
+    name: NexusGenScalars['JSON'] | null; // JSON
+    plan: string; // String!
+    role: string; // String!
+    shortBio: string | null; // String
+    status: string; // String!
+    walletAddress: string; // String!
   };
 }
 
 export interface NexusGenFieldTypeNames {
+  Mutation: {
+    // field return type name
+    authenticate: 'Viewer';
+    logIn: 'Viewer';
+    signUp: 'Viewer';
+    updateEmail: 'Viewer';
+    updateProfile: 'Viewer';
+  };
   Query: {
     // field return type name
-    ok: 'Boolean';
+    users: 'User';
+  };
+  User: {
+    // field return type name
+    id: 'ID';
+    name: 'JSON';
+  };
+  Viewer: {
+    // field return type name
+    avatar: 'JSON';
+    bio: 'String';
+    createdAt: 'Date';
+    email: 'String';
+    homepage: 'String';
+    id: 'ID';
+    location: 'String';
+    name: 'JSON';
+    plan: 'String';
+    role: 'String';
+    shortBio: 'String';
+    status: 'String';
+    walletAddress: 'String';
+  };
+  BaseViewer: {
+    // field return type name
+    avatar: 'JSON';
+    bio: 'String';
+    createdAt: 'Date';
+    email: 'String';
+    homepage: 'String';
+    id: 'ID';
+    location: 'String';
+    name: 'JSON';
+    plan: 'String';
+    role: 'String';
+    shortBio: 'String';
+    status: 'String';
+    walletAddress: 'String';
   };
 }
 
-export interface NexusGenArgTypes {}
+export interface NexusGenArgTypes {
+  Mutation: {
+    logIn: {
+      // args
+      walletAddress: string; // String!
+    };
+    signUp: {
+      // args
+      walletAddress: string; // String!
+    };
+    updateEmail: {
+      // args
+      email: string; // String!
+      id: string; // String!
+    };
+    updateProfile: {
+      // args
+      homepage?: string | null; // String
+      id: string; // String!
+      location?: string | null; // String
+      name?: string | null; // String
+      shortBio?: string | null; // String
+    };
+  };
+  Query: {
+    users: {
+      // args
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    };
+  };
+}
 
-export interface NexusGenAbstractTypeMembers {}
+export interface NexusGenAbstractTypeMembers {
+  BaseViewer: 'Viewer';
+}
 
-export interface NexusGenTypeInterfaces {}
+export interface NexusGenTypeInterfaces {
+  Viewer: 'BaseViewer';
+}
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
@@ -61,7 +249,7 @@ export type NexusGenInputNames = never;
 
 export type NexusGenEnumNames = never;
 
-export type NexusGenInterfaceNames = never;
+export type NexusGenInterfaceNames = keyof NexusGenInterfaces;
 
 export type NexusGenScalarNames = keyof NexusGenScalars;
 
@@ -69,7 +257,7 @@ export type NexusGenUnionNames = never;
 
 export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = never;
 
-export type NexusGenAbstractsUsingStrategyResolveType = never;
+export type NexusGenAbstractsUsingStrategyResolveType = 'BaseViewer';
 
 export type NexusGenFeaturesConfig = {
   abstractTypeStrategies: {
