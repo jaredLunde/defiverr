@@ -1,7 +1,7 @@
-import * as React from 'react';
 import {Checkbox as AccessibleCheckbox, Toggle} from '@accessible/checkbox';
 import type {CheckboxProps as AccessibleCheckboxProps} from '@accessible/checkbox';
-import {styles, mq} from '@/styles';
+import * as React from 'react';
+import {mq, styles} from '@/styles';
 
 /**
  * An accessible checkbox component that uses a native `<input type='checkbox'>`

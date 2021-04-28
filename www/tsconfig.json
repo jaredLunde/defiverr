@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "jsx": "preserve",
     "baseUrl": "./",
@@ -25,10 +26,12 @@
       "@/i18n": ["i18n/index.ts"],
       "@/pages/*": ["pages/*"],
       "@/public/*": ["public/*"],
+      "@/stores": ["stores/index.ts"],
       "@/styles/*": ["styles/*"],
       "@/styles": ["styles/index.tsx"],
       "@/test/*": ["test/*"],
-      "@/utils/*": ["utils/*"]
+      "@/utils/*": ["utils/*"],
+      "@/viewer": ["viewer/index.ts"]
     },
     "isolatedModules": true
   },

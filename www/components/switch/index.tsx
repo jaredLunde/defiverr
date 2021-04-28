@@ -1,10 +1,11 @@
-import * as React from 'react';
 import {Checkbox, Toggle} from '@accessible/checkbox';
 import type {CheckboxProps} from '@accessible/checkbox';
 import type {DashTokens} from '@dash-ui/styles';
-import {styles, mq} from '@/styles';
+import clsx from 'clsx';
+import * as React from 'react';
 import type {ResponsiveProp} from '@/styles';
-import {Text} from '@/components/text';
+import {mq, styles} from '@/styles';
+import {text} from '@/styles/text';
 
 /**
  * An accessible switch component that uses a native `<input type='checkbox'>`
@@ -34,14 +35,16 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
         ref={ref}
       >
         <Toggle>
-          <Text
-            size={size}
-            className={toggleSwitch({
-              on: checked,
-              off: !checked,
-              focused,
-              disabled: props.disabled,
-            })}
+          <span
+            className={clsx(
+              text({size}),
+              toggleSwitch({
+                on: checked,
+                off: !checked,
+                focused,
+                disabled: props.disabled,
+              })
+            )}
           >
             <span
               className={toggleSwitch.thumb({
@@ -49,7 +52,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
                 off: !checked,
               })}
             />
-          </Text>
+          </span>
         </Toggle>
       </Checkbox>
     );

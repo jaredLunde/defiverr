@@ -1,8 +1,8 @@
-import * as React from 'react';
 import clsx from 'clsx';
-import {row} from '@/styles/layout';
-import {responsiveStyles, styles, mq} from '@/styles';
+import * as React from 'react';
+import {mq, responsiveStyles, styles} from '@/styles';
 import type {ResponsiveProp} from '@/styles';
+import {row} from '@/styles/layout';
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
@@ -15,15 +15,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={clsx(className, {fetching}, button(variant, size))}
         {...props}
       >
-        {fetching ? (
-          <span className={row({align: 'center', gap: 'xs', height: '1em'})}>
-            <span className={loader('first')} />
-            <span className={loader('second')} />
-            <span className={loader('third')} />
-          </span>
-        ) : (
-          children
-        )}
+        {fetching ? loaderElement : children}
       </button>
     );
   }
@@ -99,7 +91,7 @@ export const button = responsiveStyles({
   /**
    * The default variant adds shared styles to the button
    */
-  default: ({font, shadow, transition, radius, color}) => ({
+  default: ({font, transition, radius, color, shadow}) => ({
     ...resetVendorButtonStyles,
     display: 'inline-flex',
     alignItems: 'center',
@@ -110,7 +102,6 @@ export const button = responsiveStyles({
     fontWeight: 600,
     padding: `${10 / 16}rem ${14 / 16}rem`,
     borderRadius: radius.primary,
-    boxShadow: shadow.md,
     transitionProperty: 'background-color, box-shadow',
     transitionDuration: transition.duration.fast,
     transitionTimingFunction: transition.timing.inOut,
@@ -119,7 +110,6 @@ export const button = responsiveStyles({
       cursor: 'not-allowed',
       backgroundColor: color.gray300,
       color: color.gray600,
-      boxShadow: 'none',
     },
 
     '&.fetching': {
@@ -136,13 +126,16 @@ export const button = responsiveStyles({
       backgroundColor: color.primary,
       color: color.white,
     }),
-    hover: ({color, shadow}) => ({
+    hover: ({color}) => ({
       '&:hover:not([disabled]):not(.fetching)': {
+        color: color.white,
+        textDecoration: 'none',
         backgroundColor: color.primaryHover,
       },
       '&:active:not([disabled]):not(.fetching)': {
+        color: color.white,
+        textDecoration: 'none',
         backgroundColor: color.primaryActive,
-        boxShadow: shadow.xs,
       },
     }),
   }),
@@ -152,13 +145,16 @@ export const button = responsiveStyles({
       backgroundColor: color.secondary,
       color: color.white,
     }),
-    hover: ({color, shadow}) => ({
+    hover: ({color}) => ({
       '&:hover:not([disabled]):not(.fetching)': {
+        color: color.white,
+        textDecoration: 'none',
         backgroundColor: color.secondaryHover,
       },
       '&:active:not([disabled]):not(.fetching)': {
+        color: color.white,
+        textDecoration: 'none',
         backgroundColor: color.secondaryActive,
-        boxShadow: shadow.xs,
       },
     }),
   }),
@@ -185,12 +181,12 @@ const loaderKeyframes = styles.keyframes({
   },
 });
 
-const loader = styles({
+export const loader = styles({
   default: (t) => ({
     display: 'inline-block',
     transform: 'translateZ(0)',
     transformOrigin: 'center',
-    border: `${t.borderWidth.hairline} solid currentColor`,
+    backgroundColor: 'currentColor',
     borderRadius: t.radius.full,
     width: '0.33em',
     height: '0.33em',
@@ -200,10 +196,20 @@ const loader = styles({
   first: {
     animationDelay: '0s',
   },
-  second: {
+  second: (t) => ({
     animationDelay: '0.32s',
-  },
-  third: {
+    marginLeft: t.gap.xs,
+  }),
+  third: (t) => ({
     animationDelay: '0.16s',
-  },
+    marginLeft: t.gap.xs,
+  }),
 });
+
+export const loaderElement = (
+  <span className={row({height: '1em', display: 'inlineBlock'})}>
+    <span className={loader('first')} />
+    <span className={loader('second')} />
+    <span className={loader('third')} />
+  </span>
+);

@@ -1,23 +1,21 @@
-import * as React from 'react';
-import forwardRefAs from 'forward-ref-as';
-import clsx from 'clsx';
-import type {StyleMap, DashTokens} from '@dash-ui/styles';
+import type {DashTokens, StyleMap} from '@dash-ui/styles';
 import * as Separator from '@radix-ui/react-separator';
-import {responsiveStyles, tokens} from '@/styles';
+import clsx from 'clsx';
+import * as React from 'react';
 import type {ResponsiveProp} from '@/styles';
+import {responsiveStyles, tokens} from '@/styles';
 
-export const Divider = forwardRefAs<'div', DividerProps>(function Divider(
-  {className, color, ...props},
-  ref
-) {
-  return (
-    <Separator.Root
-      ref={ref}
-      className={clsx(className, divider(color))}
-      {...props}
-    />
-  );
-});
+export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
+  function Divider({className, color, ...props}, ref) {
+    return (
+      <Separator.Root
+        ref={ref}
+        className={clsx(className, divider(color))}
+        {...props}
+      />
+    );
+  }
+);
 
 export interface DividerProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'>,

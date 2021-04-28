@@ -6,15 +6,17 @@ interface BaseViewer {
   avatar: JSON
   bio: String
   createdAt: Date!
-  email: String!
+  email: String
   homepage: String
   id: ID!
   location: String
   name: JSON
+  nonce: String!
   plan: String!
   role: String!
   shortBio: String
   status: String!
+  username: String
   walletAddress: String!
 }
 
@@ -31,7 +33,6 @@ scalar JSON
 type Mutation {
   authenticate: Viewer
   logIn(walletAddress: String!): Viewer
-  signUp(walletAddress: String!): Viewer
   updateEmail(email: String!, id: String!): Viewer
   updateProfile(homepage: String, id: String!, location: String, name: String, shortBio: String): Viewer
 }
@@ -49,14 +50,16 @@ type Viewer implements BaseViewer {
   avatar: JSON
   bio: String
   createdAt: Date!
-  email: String!
+  email: String
   homepage: String
   id: ID!
   location: String
   name: JSON
+  nonce: String!
   plan: String!
   role: String!
   shortBio: String
   status: String!
+  username: String
   walletAddress: String!
 }

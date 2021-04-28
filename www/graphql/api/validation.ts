@@ -8,12 +8,16 @@ export const errorCode = {
   password: {
     incorrect: 'password.incorrect',
   },
+  wallet: {
+    invalidAddress: 'wallet.invalidAddress',
+  },
 } as const;
 
 export const messages = {
   [errorCode.sql.duplicateKey]: `{{#label}} already exists`,
   [errorCode.sql.notFound]: `{{#label}} not found`,
   [errorCode.password.incorrect]: `{{#label}} is incorrect`,
+  [errorCode.wallet.invalidAddress]: `A valid wallet address was not provided`,
 } as const;
 
 export const is = {

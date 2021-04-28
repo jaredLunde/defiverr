@@ -1,11 +1,14 @@
-import * as React from 'react';
+import {useGlobal} from '@dash-ui/react';
+import resetGlobalStyles from '@dash-ui/reset';
+import {IdProvider} from '@radix-ui/react-id';
 import type {AppProps} from 'next/app';
 import Head from 'next/head';
+import * as React from 'react';
 import {IntlProvider} from 'react-intl';
-import resetGlobalStyles from '@dash-ui/reset';
-import {useGlobal} from '@dash-ui/react';
+import {Header} from '@/components/header';
+import {Toast} from '@/components/toast';
 import {StylesProvider} from '@/styles';
-import {typography} from '@/components/typography';
+import {typography} from '@/styles/text';
 
 export default App;
 
@@ -33,13 +36,17 @@ function App({
         />
       </Head>
 
-      <IntlProvider
-        messages={localeMessages}
-        locale={locale}
-        defaultLocale={defaultLocale}
-      >
-        <Component {...pageProps} />
-      </IntlProvider>
+      <IdProvider>
+        <IntlProvider
+          messages={localeMessages}
+          locale={locale}
+          defaultLocale={defaultLocale}
+        >
+          <Header />
+          <Component {...pageProps} />
+          <Toast />
+        </IntlProvider>
+      </IdProvider>
     </StylesProvider>
   );
 }
@@ -75,6 +82,7 @@ function GlobalStyles() {
         minHeight: '100%',
         backgroundColor: color.bodyBg,
         fontFamily: font.family.sans,
+        overflowX: 'hidden',
       },
       '.loud': {
         transitionProperty: 'opacity,visibility',

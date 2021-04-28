@@ -1,10 +1,6 @@
 import * as React from 'react';
 import type {UseMutationState, UseQueryState} from 'urql';
-// import {toast} from '@/design-system/toast';
-
-function toast(opt: any) {
-  console.error(opt);
-}
+import {toast} from '@/components/toast';
 
 export function useUrqlError(
   result: UseMutationState | UseQueryState,

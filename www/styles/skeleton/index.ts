@@ -1,5 +1,5 @@
+import {compoundStyles, styles} from '@/styles';
 import {box} from '@/styles/layout';
-import {styles, compoundStyles} from '@/styles';
 
 export const skeleton = compoundStyles({
   default: styles.one({

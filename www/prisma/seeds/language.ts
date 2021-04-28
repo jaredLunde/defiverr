@@ -1,5 +1,5 @@
-import countryLanguage from 'country-language';
 import type {PrismaClient} from '@prisma/client';
+import countryLanguage from 'country-language';
 
 export function main(prisma: PrismaClient) {
   return Promise.all(

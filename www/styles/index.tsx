@@ -1,17 +1,14 @@
-import {createStyles} from '@dash-ui/styles';
-import responsive from '@dash-ui/responsive';
 import dashMq from '@dash-ui/mq';
 import {DashProvider} from '@dash-ui/react';
+import responsive from '@dash-ui/responsive';
 import type {
   Responsive,
-  ResponsiveStyle,
-  ResponsiveOne,
   ResponsiveLazy,
+  ResponsiveOne,
+  ResponsiveStyle,
 } from '@dash-ui/responsive';
-import type {MediaQueries} from '@dash-ui/react-layout';
-import type {DashTokens, Style, StylesOne, StylesLazy} from '@dash-ui/styles';
-
-// import css from 'minify-css.macro';
+import {createStyles} from '@dash-ui/styles';
+import type {DashTokens, Style, StylesLazy, StylesOne} from '@dash-ui/styles';
 
 /**
  * These are the media queries you're using throughout your app.
@@ -382,7 +379,7 @@ export const tokens = {
 
   radius: {
     none: '0',
-    primary: '0.375rem',
+    primary: '0.5rem',
     sm: '0.125rem',
     base: '0.25rem',
     md: '0.375rem',
@@ -457,6 +454,7 @@ export const tokens = {
   },
 
   borderWidth: {
+    none: 0,
     // Hairline borders
     hairline:
       (typeof window === 'undefined'
@@ -468,18 +466,18 @@ export const tokens = {
 
   color: {
     ...colorSystem,
-    translucentLight: 'rgba(245, 245, 252, 0.33)',
+    translucentLight: 'rgba(245, 245, 252, 0.8)',
     translucentDark: 'rgba(40, 40, 48, 0.15)',
     translucentContrast: 'rgba(40, 40, 48, 0.15)',
     bodyBg: colorSystem.white,
 
     text: colorSystem.blueGray800,
     textAccent: colorSystem.blueGray600,
-    textAccentLight: colorSystem.blueGray900,
+    textAccentLight: colorSystem.blueGray400,
 
-    primary: colorSystem.blue700,
-    primaryHover: colorSystem.blue800,
-    primaryActive: colorSystem.blue900,
+    primary: colorSystem.indigo500,
+    primaryHover: colorSystem.indigo700,
+    primaryActive: colorSystem.indigo800,
 
     secondary:
       'hsl(224.7457627118644, 54.128440366972484%, 18.372549019607842%)',
@@ -524,7 +522,7 @@ export function StylesProvider({children}: {children: React.ReactNode}) {
 export const responsiveStyles = responsive(styles, mediaQueries);
 export type ResponsiveProp<Variant> =
   | Variant
-  | Responsive<Variant, MediaQueries>;
+  | Responsive<Variant, AppMediaQueries>;
 
 /**
  * A function for creating compound/multi-variant styles
@@ -542,40 +540,40 @@ export function compoundStyles<
   >,
   StyleMap extends {[Name in keyof T]: T[Name]}
 >(styleMap: StyleMap) {
-  const cache: Record<string, string[]> = {};
+  const mapKeys = ['default'];
+  mapKeys.push(...Object.keys(styleMap));
 
   function css(
     compoundMap: {[Name in keyof StyleMap]?: Parameters<StyleMap[Name]>[0]}
-  ): string[] {
-    const key = JSON.stringify(compoundMap);
+  ): string {
+    let output = '';
 
-    if (cache[key]) {
-      return cache[key];
+    for (let i = 0; i < mapKeys.length; i++) {
+      const key = mapKeys[i];
+      const value =
+        key === 'default' &&
+        // @ts-expect-error
+        typeof styleMap.default === 'function'
+          ? // @ts-expect-error
+            styleMap.default()
+          : (compoundMap as any)[key];
+      if (value === void 0 || value === null) continue;
+      output += (styleMap as any)[key]?.css(value);
     }
 
-    const map = {default: true, ...compoundMap};
-    const keys = Object.keys(map);
-    const value = keys.map((key) => {
-      const value = (map as any)[key];
-      if (value === void 0 || value === null) return '';
-      return (styleMap as any)[key]?.css(value);
-    });
-
-    return (cache[key] = value);
+    return output;
   }
 
   return Object.assign(
     function compoundStyle(
-      compoundMap: {[Name in keyof StyleMap]?: Parameters<StyleMap[Name]>[0]}
+      compoundMap: {
+        [Name in keyof StyleMap]?: Parameters<StyleMap[Name]>[0];
+      } = {}
     ) {
-      return styles.join(...css(compoundMap));
+      return styles.cls(css(compoundMap));
     },
     {
-      css(
-        compoundMap: {[Name in keyof StyleMap]?: Parameters<StyleMap[Name]>[0]}
-      ) {
-        return css(compoundMap).join('');
-      },
+      css,
       styles: styleMap,
     }
   );

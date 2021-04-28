@@ -1,11 +1,9 @@
+import useId from '@accessible/use-id';
 import * as React from 'react';
 import type {FieldError} from 'react-hook-form';
-import useId from '@accessible/use-id';
-import {text} from '@/components/text';
+import {Icon} from '@/components/icon';
 import {column, row} from '@/styles/layout';
-
-// import {Icon} from '@/components/icon';
-// import AlertCircleIcon from '@/public/icons/alert-circle.svg';
+import {text} from '@/styles/text';
 
 /**
  * A component that formats Yup errors and creates accessible error messages
@@ -53,11 +51,11 @@ export function YupError({
 
       {!!errorMessage && (
         <div className={row({align: 'start', gap: 'sm'})} id={id}>
-          {/* <Icon
-            render={AlertCircleIcon}
+          <Icon
+            src='/icons/alert-circle.svg'
             color='orange600'
             style={{top: '0.25em'}}
-         />*/}
+          />
 
           <span
             className={text({size: 'xs'})}

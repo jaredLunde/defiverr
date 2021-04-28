@@ -1,9 +1,9 @@
-import * as React from 'react';
-import clsx from 'clsx';
 import type {DashTokens} from '@dash-ui/styles';
-import {text} from '@/components/text';
-import {styles, responsiveStyles} from '@/styles';
+import clsx from 'clsx';
+import * as React from 'react';
+import {responsiveStyles, styles} from '@/styles';
 import type {ResponsiveProp} from '@/styles';
+import {text} from '@/styles/text';
 
 /**
  * A loading spinner component with color and size options.

@@ -1,5 +1,5 @@
-import * as React from 'react';
 import clsx from 'clsx';
+import * as React from 'react';
 import {styles} from '@/styles';
 
 /**
@@ -25,11 +25,11 @@ export const badge = styles({
   default: ({font, color}) => ({
     display: 'inline-flex',
     alignItems: 'center',
-    fontSize: 10 / 14 + 'em',
+    fontSize: 10 / 12 + 'em',
     fontWeight: 600,
     letterSpacing: font.tracking.wide,
     lineHeight: font.leading.none,
-    padding: `0.3091em 0.5em`,
+    height: font.leading.loose,
     textDecoration: 'none',
     borderRadius: '0.25em',
     verticalAlign: 'text-bottom',

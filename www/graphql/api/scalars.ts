@@ -1,5 +1,5 @@
-import * as nexus from 'nexus';
 import {GraphQLDate, GraphQLJSON} from 'graphql-scalars';
+import * as nexus from 'nexus';
 
 export const types = [
   nexus.decorateType(GraphQLDate, {

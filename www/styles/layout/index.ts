@@ -1,5 +1,5 @@
 import type {DashTokens} from '@dash-ui/styles';
-import {styles, responsiveStyles, compoundStyles} from '@/styles';
+import {compoundStyles, responsiveStyles, styles} from '@/styles';
 import {unit} from '@/utils/unit';
 
 /**
@@ -86,10 +86,15 @@ export const box = compoundStyles({
    */
   border: responsiveStyles.lazy(
     ([width, borderColor]: [
-      Extract<keyof DashTokens['borderWidth'], string | number>,
+      (
+        | Extract<keyof DashTokens['borderWidth'], string | number>
+        | Extract<keyof DashTokens['borderWidth'], string | number>[]
+      ),
       Extract<keyof DashTokens['color'], string | number>
     ]) => ({borderWidth, color}) => ({
-      borderWidth: borderWidth[width],
+      borderWidth: Array.isArray(width)
+        ? width.map((w) => borderWidth[w]).join('')
+        : borderWidth[width],
       borderStyle: 'solid',
       borderColor: color[borderColor],
     })
@@ -323,11 +328,16 @@ export const cluster = compoundStyles({
    */
   gap: responsiveStyles.lazy(
     (value: Extract<keyof DashTokens['gap'], string | number>) => ({gap}) => ({
-      marginTop: `calc(-1 * ${gap[value]})!important`,
-      marginLeft: `calc(-1 * ${gap[value]})!important`,
-      '& > *': {
-        marginTop: `${gap[value]}!important`,
-        marginLeft: `${gap[value]}!important`,
+      '@supports (display: flex) and (gap: 1em)': {
+        gap: gap[value],
+      },
+      '@supports not (display: flex) and (gap: 1em)': {
+        marginTop: `calc(-1 * ${gap[value]})!important`,
+        marginLeft: `calc(-1 * ${gap[value]})!important`,
+        '& > *': {
+          marginTop: `${gap[value]}!important`,
+          marginLeft: `${gap[value]}!important`,
+        },
       },
     })
   ),
@@ -373,8 +383,13 @@ export const column = compoundStyles({
    */
   gap: responsiveStyles.lazy(
     (value: Extract<keyof DashTokens['gap'], string | number>) => ({gap}) => ({
-      '& > * + *': {
-        marginTop: `${gap[value]}!important`,
+      '@supports (display: flex) and (gap: 1em)': {
+        gap: gap[value],
+      },
+      '@supports not (display: flex) and (gap: 1em)': {
+        '& > * + *': {
+          marginTop: `${gap[value]}!important`,
+        },
       },
     })
   ),
@@ -429,6 +444,9 @@ const sharedGrid = compoundStyles({
           ]
     ) => ({gap}) => ({
       gridGap: Array.isArray(value)
+        ? value.map((p) => gap[p]).join(' ')
+        : gap[value] + ' ' + gap[value],
+      gap: Array.isArray(value)
         ? value.map((p) => gap[p]).join(' ')
         : gap[value] + ' ' + gap[value],
     })
@@ -649,8 +667,13 @@ export const row = compoundStyles({
    */
   gap: responsiveStyles.lazy(
     (value: Extract<keyof DashTokens['gap'], string | number>) => ({gap}) => ({
-      '& > * + *': {
-        marginLeft: `${gap[value]}!important`,
+      '@supports (display: flex) and (gap: 1em)': {
+        gap: gap[value],
+      },
+      '@supports not (display: flex) and (gap: 1em)': {
+        '& > * + *': {
+          marginLeft: `${gap[value]}!important`,
+        },
       },
     })
   ),

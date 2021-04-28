@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import path from 'path';
-import {GraphQLResolveInfo} from 'graphql';
 import {UserInputError} from 'apollo-server-micro';
-import {plugin, core} from 'nexus';
+import {GraphQLResolveInfo} from 'graphql';
 import type {ObjectSchema} from 'joi';
+import {core, plugin} from 'nexus';
 
 export function fieldValidatePlugin() {
   return plugin({

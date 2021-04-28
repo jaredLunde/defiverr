@@ -1,8 +1,8 @@
-import * as React from 'react';
-import clsx from 'clsx';
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
-import {responsiveStyles, mq, styles} from '@/styles';
+import clsx from 'clsx';
+import * as React from 'react';
 import type {ResponsiveProp} from '@/styles';
+import {mq, responsiveStyles, styles} from '@/styles';
 
 export const Fieldset = Object.assign(
   React.forwardRef<HTMLFieldSetElement, FieldsetProps>(function Fieldset(

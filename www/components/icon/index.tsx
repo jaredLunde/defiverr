@@ -1,9 +1,9 @@
-import * as React from 'react';
 import type {DashTokens} from '@dash-ui/styles';
 import clsx from 'clsx';
-import {styles, responsiveStyles} from '@/styles';
+import * as React from 'react';
+import {compoundStyles, responsiveStyles, styles} from '@/styles';
 import type {ResponsiveProp} from '@/styles';
-import {text} from '@/components/text';
+import {text} from '@/styles/text';
 
 /**
  * A component for rendering icon styles from design tokens. Icons
@@ -13,17 +13,14 @@ import {text} from '@/components/text';
  * properties set on it. If using the `color` prop, your `fill` and
  * `strokeColor` props must be set to `"currentColor"`.
  */
-export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon(
-  {render: As, color, size = '1em', width, height, className, ...props},
+export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
+  {src, color, size = '1em', className, ...props},
   ref
 ) {
   return (
-    <As
+    <span
       ref={ref}
-      className={clsx(
-        className,
-        styles.join(icon.css(), icon.color.css(color))
-      )}
+      className={clsx(className, icon({color, size, src}))}
       role={
         props.hasOwnProperty('role')
           ? props.role
@@ -32,16 +29,13 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon(
           : void 0
       }
       aria-hidden={!props['aria-label']}
-      width={width ?? size}
-      height={height ?? size}
-      viewBox='0 0 24 24 '
       {...props}
     />
   );
 });
 
 export interface IconProps
-  extends Omit<React.SVGAttributes<SVGElement>, 'color' | 'className'> {
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'> {
   /**
    * Set a size on the icon. Sizing this way requires that your SVG has no `width`
    * or `height` properties or styles set on it.
@@ -53,59 +47,59 @@ export interface IconProps
    */
   color?: ResponsiveProp<keyof DashTokens['color']>;
   /**
-   * Set one or several class names on the svg
-   */
-  className?: string | string[];
-  /**
    * This is the SVG component you want to render as an icon
    */
-  render: React.ComponentType<
-    React.SVGAttributes<SVGSVGElement> & React.RefAttributes<SVGSVGElement>
-  >;
+  src: string;
 }
 
-export const icon = Object.assign(
-  styles.one({display: 'inline-block', verticalAlign: 'middle'}),
-  {
-    /**
-     * A responsive style for adding color to icons
-     */
-    color: text.color,
-    /**
-     * A responsive style for icon sizing
-     */
-    size: responsiveStyles.lazy(
-      (
-        value:
-          | undefined
-          | React.ReactText
-          | [React.ReactText | undefined, React.ReactText | undefined]
-      ) => {
-        const initialWidth = Array.isArray(value) ? value[0] : value;
-        let height = Array.isArray(value) ? value[1] : value;
-        const width =
-          initialWidth !== void 0 &&
-          initialWidth !== null &&
-          initialWidth !== ''
-            ? initialWidth
-            : height !== void 0 && height !== null && height !== ''
-            ? 'auto'
-            : '1em';
-        height =
-          height !== void 0 && height !== null && height !== ''
-            ? height
-            : initialWidth !== void 0 &&
-              initialWidth !== null &&
-              initialWidth !== ''
-            ? 'auto'
-            : '1em';
+export const icon = compoundStyles({
+  default: styles.one({
+    display: 'inline-block',
+    verticalAlign: 'middle',
+    maskPosition: 'center',
+    maskRepeat: 'no-repeat',
+    maskSize: 'cover',
+    backgroundColor: 'currentColor',
+  }),
+  src: responsiveStyles.lazy((src: string) => ({
+    maskImage: `url("${src}")`,
+  })),
+  /**
+   * A responsive style for adding color to icons
+   */
+  color: text.styles.color,
+  /**
+   * A responsive style for icon sizing
+   */
+  size: responsiveStyles.lazy(
+    (
+      value:
+        | undefined
+        | React.ReactText
+        | [React.ReactText | undefined, React.ReactText | undefined]
+    ) => {
+      const initialWidth = Array.isArray(value) ? value[0] : value;
+      let height = Array.isArray(value) ? value[1] : value;
+      const width =
+        initialWidth !== void 0 && initialWidth !== null && initialWidth !== ''
+          ? initialWidth
+          : height !== void 0 && height !== null && height !== ''
+          ? 'auto'
+          : '1em';
+      height =
+        height !== void 0 && height !== null && height !== ''
+          ? height
+          : initialWidth !== void 0 &&
+            initialWidth !== null &&
+            initialWidth !== ''
+          ? 'auto'
+          : '1em';
 
-        return {
-          width,
-          height,
-          contain: width !== 'auto' && height !== 'auto' ? 'strict' : 'none',
-        };
-      }
-    ),
-  }
-);
+      return {
+        width,
+        height,
+        contain: width !== 'auto' && height !== 'auto' ? 'strict' : 'none',
+      };
+    }
+  ),
+});

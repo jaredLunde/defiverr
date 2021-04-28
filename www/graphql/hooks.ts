@@ -23,11 +23,13 @@ export type Scalars = {
 export type BaseViewer = {
   id: Scalars['ID'];
   walletAddress: Scalars['String'];
-  email: Scalars['String'];
+  nonce: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   role: Scalars['String'];
   status: Scalars['String'];
   plan: Scalars['String'];
   name?: Maybe<Scalars['JSON']>;
+  username?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['JSON']>;
   bio?: Maybe<Scalars['String']>;
   shortBio?: Maybe<Scalars['String']>;
@@ -38,15 +40,10 @@ export type BaseViewer = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  signUp?: Maybe<Viewer>;
   logIn?: Maybe<Viewer>;
   authenticate?: Maybe<Viewer>;
   updateProfile?: Maybe<Viewer>;
   updateEmail?: Maybe<Viewer>;
-};
-
-export type MutationSignUpArgs = {
-  walletAddress: Scalars['String'];
 };
 
 export type MutationLogInArgs = {
@@ -86,11 +83,13 @@ export type Viewer = BaseViewer & {
   __typename?: 'Viewer';
   id: Scalars['ID'];
   walletAddress: Scalars['String'];
-  email: Scalars['String'];
+  nonce: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   role: Scalars['String'];
   status: Scalars['String'];
   plan: Scalars['String'];
   name?: Maybe<Scalars['JSON']>;
+  username?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['JSON']>;
   bio?: Maybe<Scalars['String']>;
   shortBio?: Maybe<Scalars['String']>;
@@ -122,31 +121,6 @@ export type AuthenticateMutation = {__typename?: 'Mutation'} & {
   >;
 };
 
-export type SignUpMutationVariables = Exact<{
-  walletAddress: Scalars['String'];
-}>;
-
-export type SignUpMutation = {__typename?: 'Mutation'} & {
-  signUp?: Maybe<
-    {__typename?: 'Viewer'} & Pick<
-      Viewer,
-      | 'id'
-      | 'walletAddress'
-      | 'email'
-      | 'role'
-      | 'status'
-      | 'plan'
-      | 'name'
-      | 'avatar'
-      | 'bio'
-      | 'shortBio'
-      | 'homepage'
-      | 'location'
-      | 'createdAt'
-    >
-  >;
-};
-
 export type LogInMutationVariables = Exact<{
   walletAddress: Scalars['String'];
 }>;
@@ -157,10 +131,12 @@ export type LogInMutation = {__typename?: 'Mutation'} & {
       Viewer,
       | 'id'
       | 'walletAddress'
+      | 'nonce'
       | 'email'
       | 'role'
       | 'status'
       | 'plan'
+      | 'username'
       | 'name'
       | 'avatar'
       | 'bio'
@@ -185,10 +161,12 @@ export type UpdateProfileMutation = {__typename?: 'Mutation'} & {
     {__typename?: 'Viewer'} & Pick<
       Viewer,
       | 'id'
+      | 'walletAddress'
       | 'email'
       | 'role'
       | 'status'
       | 'plan'
+      | 'username'
       | 'name'
       | 'avatar'
       | 'bio'
@@ -234,40 +212,17 @@ export function useAuthenticateMutation() {
     AuthenticateDocument
   );
 }
-export const SignUpDocument = gql`
-  mutation signUp($walletAddress: String!) {
-    signUp(walletAddress: $walletAddress) {
-      id
-      walletAddress
-      email
-      role
-      status
-      plan
-      name
-      avatar
-      bio
-      shortBio
-      homepage
-      location
-      createdAt
-    }
-  }
-`;
-
-export function useSignUpMutation() {
-  return Urql.useMutation<SignUpMutation, SignUpMutationVariables>(
-    SignUpDocument
-  );
-}
 export const LogInDocument = gql`
   mutation logIn($walletAddress: String!) {
     logIn(walletAddress: $walletAddress) {
       id
       walletAddress
+      nonce
       email
       role
       status
       plan
+      username
       name
       avatar
       bio
@@ -298,10 +253,12 @@ export const UpdateProfileDocument = gql`
       location: $location
     ) {
       id
+      walletAddress
       email
       role
       status
       plan
+      username
       name
       avatar
       bio

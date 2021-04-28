@@ -3,8 +3,8 @@
  * Do not make changes to this file directly
  */
 
-import {FieldAuthorizeResolver} from 'nexus/dist/plugins/fieldAuthorizePlugin';
 import {core} from 'nexus';
+import {FieldAuthorizeResolver} from 'nexus/dist/plugins/fieldAuthorizePlugin';
 import {FieldValidateResolver} from '../graphql/api/nexus-plugin-validate';
 import {NexusContext} from './nexus-context';
 declare global {
@@ -75,15 +75,17 @@ export interface NexusGenObjects {
     avatar?: NexusGenScalars['JSON'] | null; // JSON
     bio?: string | null; // String
     createdAt: NexusGenScalars['Date']; // Date!
-    email: string; // String!
+    email?: string | null; // String
     homepage?: string | null; // String
     id: string; // ID!
     location?: string | null; // String
     name?: NexusGenScalars['JSON'] | null; // JSON
+    nonce: string; // String!
     plan: string; // String!
     role: string; // String!
     shortBio?: string | null; // String
     status: string; // String!
+    username?: string | null; // String
     walletAddress: string; // String!
   };
 }
@@ -103,7 +105,6 @@ export interface NexusGenFieldTypes {
     // field return type
     authenticate: NexusGenRootTypes['Viewer'] | null; // Viewer
     logIn: NexusGenRootTypes['Viewer'] | null; // Viewer
-    signUp: NexusGenRootTypes['Viewer'] | null; // Viewer
     updateEmail: NexusGenRootTypes['Viewer'] | null; // Viewer
     updateProfile: NexusGenRootTypes['Viewer'] | null; // Viewer
   };
@@ -121,15 +122,17 @@ export interface NexusGenFieldTypes {
     avatar: NexusGenScalars['JSON'] | null; // JSON
     bio: string | null; // String
     createdAt: NexusGenScalars['Date']; // Date!
-    email: string; // String!
+    email: string | null; // String
     homepage: string | null; // String
     id: string; // ID!
     location: string | null; // String
     name: NexusGenScalars['JSON'] | null; // JSON
+    nonce: string; // String!
     plan: string; // String!
     role: string; // String!
     shortBio: string | null; // String
     status: string; // String!
+    username: string | null; // String
     walletAddress: string; // String!
   };
   BaseViewer: {
@@ -137,15 +140,17 @@ export interface NexusGenFieldTypes {
     avatar: NexusGenScalars['JSON'] | null; // JSON
     bio: string | null; // String
     createdAt: NexusGenScalars['Date']; // Date!
-    email: string; // String!
+    email: string | null; // String
     homepage: string | null; // String
     id: string; // ID!
     location: string | null; // String
     name: NexusGenScalars['JSON'] | null; // JSON
+    nonce: string; // String!
     plan: string; // String!
     role: string; // String!
     shortBio: string | null; // String
     status: string; // String!
+    username: string | null; // String
     walletAddress: string; // String!
   };
 }
@@ -155,7 +160,6 @@ export interface NexusGenFieldTypeNames {
     // field return type name
     authenticate: 'Viewer';
     logIn: 'Viewer';
-    signUp: 'Viewer';
     updateEmail: 'Viewer';
     updateProfile: 'Viewer';
   };
@@ -178,10 +182,12 @@ export interface NexusGenFieldTypeNames {
     id: 'ID';
     location: 'String';
     name: 'JSON';
+    nonce: 'String';
     plan: 'String';
     role: 'String';
     shortBio: 'String';
     status: 'String';
+    username: 'String';
     walletAddress: 'String';
   };
   BaseViewer: {
@@ -194,10 +200,12 @@ export interface NexusGenFieldTypeNames {
     id: 'ID';
     location: 'String';
     name: 'JSON';
+    nonce: 'String';
     plan: 'String';
     role: 'String';
     shortBio: 'String';
     status: 'String';
+    username: 'String';
     walletAddress: 'String';
   };
 }
@@ -205,10 +213,6 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     logIn: {
-      // args
-      walletAddress: string; // String!
-    };
-    signUp: {
       // args
       walletAddress: string; // String!
     };

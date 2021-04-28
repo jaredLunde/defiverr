@@ -1,7 +1,7 @@
-import * as React from 'react';
+import {Style} from '@dash-ui/react/server';
 import Document from 'next/document';
 import type {DocumentContext} from 'next/document';
-import {Style} from '@dash-ui/react/server';
+import * as React from 'react';
 import {styles} from '@/styles';
 
 export default class MyDocument extends Document {

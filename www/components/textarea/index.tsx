@@ -1,9 +1,9 @@
-import * as React from 'react';
-import clsx from 'clsx';
 import useMergedRef from '@react-hook/merged-ref';
+import clsx from 'clsx';
+import * as React from 'react';
+import {resetVendorInputStyles} from '@/components/input';
 import {mq, styles} from '@/styles';
 import {noop} from '@/utils/noop';
-import {resetVendorInputStyles} from '@/components/input';
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(

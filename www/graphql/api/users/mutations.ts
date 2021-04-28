@@ -1,51 +1,14 @@
 import crypto from 'crypto';
-import * as nexus from 'nexus';
-import * as jwt from 'jsonwebtoken';
-import joi from 'joi';
 import human from 'humanparser';
+import joi from 'joi';
+import * as jwt from 'jsonwebtoken';
+import * as nexus from 'nexus';
+import web3 from 'web3';
 import {jwtConfig, jwtCookieName} from '@/graphql/api/jwt';
-import {errorCode, messages, is} from '@/graphql/api/validation';
+import type {JwtData} from '@/graphql/api/jwt';
+import * as cookies from '@/graphql/api/utils/cookies';
+import {errorCode, is, messages} from '@/graphql/api/validation';
 import {Viewer} from './schemas';
-
-export const signUp = nexus.mutationField('signUp', {
-  type: Viewer,
-
-  args: {
-    walletAddress: nexus.nonNull(nexus.stringArg()),
-  },
-
-  async validate(source, {walletAddress}, {db}) {
-    const user = await db.user.findUnique({where: {walletAddress}});
-    return joi.object({
-      walletAddress: joi
-        .string()
-        .custom(is.notDuplicate(user))
-        .email()
-        .messages(messages),
-    });
-  },
-
-  async resolve(source, {walletAddress}, {req, db}) {
-    const ips =
-      req.headers['x-forwarded-for'] || req.socket.remoteAddress || '::1';
-    const ip = Array.isArray(ips) ? ips[0] : ips;
-    const viewer = await db.user.create({
-      data: {
-        walletAddress,
-        encryptionKey: crypto.randomBytes(32).toString('base64'),
-        createdIp: ip,
-        latestIp: ip,
-      },
-    });
-
-    jwt.sign({id: viewer.id}, req.secrets.jwt, {
-      ...jwtConfig,
-      expiresIn: '30d',
-    });
-
-    return viewer;
-  },
-});
 
 export const logIn = nexus.mutationField('logIn', {
   type: Viewer,
@@ -54,36 +17,54 @@ export const logIn = nexus.mutationField('logIn', {
     walletAddress: nexus.nonNull(nexus.stringArg()),
   },
 
-  async validate(source, {walletAddress}, {db}) {
-    const user = await db.user.findUnique({where: {walletAddress}});
-    // Additional timing attack mitigation
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.random() * (300 - 100) + 100)
-    );
+  validate: joi.object({
+    walletAddress: joi
+      .string()
+      .custom((address, helpers) =>
+        is.truthy(
+          web3.utils.isAddress(address),
+          errorCode.wallet.invalidAddress
+        )(address, helpers)
+      )
+      .messages(messages),
+  }),
 
-    return joi.object({
-      walletAddress: joi
-        .string()
-        .custom(is.truthy(user, errorCode.password.incorrect))
-        .messages(messages),
-    });
-  },
-
-  async resolve(source, {walletAddress}, {req, db}) {
-    const viewer = await db.user.findUnique({where: {walletAddress}});
-    if (!viewer) return null;
+  async resolve(source, {walletAddress}, {req, res, db}) {
+    let viewer = await db.user.findUnique({where: {walletAddress}});
     const ips =
       req.headers['x-forwarded-for'] || req.socket.remoteAddress || '::1';
     const ip = Array.isArray(ips) ? ips[0] : ips;
-    await db.user.update({where: {id: viewer.id}, data: {latestIp: ip}});
 
-    return {
-      ...viewer,
-      token: jwt.sign({id: viewer.id}, req.secrets.jwt, {
+    if (!viewer) {
+      viewer = await db.user.create({
+        data: {
+          walletAddress,
+          encryptionKey: crypto.randomBytes(32).toString('base64'),
+          createdIp: ip,
+          latestIp: ip,
+        },
+      });
+    } else {
+      await db.user.update({where: {id: viewer.id}, data: {latestIp: ip}});
+    }
+
+    /*
+    const jwtData: JwtData = {id: viewer.id};
+    cookies.set(
+      res,
+      jwtCookieName,
+      jwt.sign(jwtData, req.secrets.jwt, {
         ...jwtConfig,
         expiresIn: '30d',
       }),
-    };
+      {
+        maxAge: 30 * 24 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+      }
+    );
+      */
+    return viewer;
   },
 });
 
@@ -159,11 +140,13 @@ export const updateEmail = nexus.mutationField('updateEmail', {
     const ips =
       req.headers['x-forwarded-for'] || req.socket.remoteAddress || '::1';
     const ip = Array.isArray(ips) ? ips[0] : ips;
+    // TODO: send validate email
 
     return db.user.update({
       where: {id},
       data: {
         email,
+        status: 'unconfirmed',
         latestIp: ip,
       },
     });

@@ -1,7 +1,4 @@
 module.exports = {
-  future: {
-    webpack5: true,
-  },
   /**
    * @see https://nextjs.org/docs/advanced-features/i18n-routing
    */

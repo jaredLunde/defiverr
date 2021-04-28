@@ -16,11 +16,13 @@ export const BaseViewer = nexus.interfaceType({
   definition(t) {
     t.nonNull.id('id');
     t.nonNull.string('walletAddress');
-    t.nonNull.string('email');
+    t.nonNull.string('nonce');
+    t.string('email');
     t.nonNull.string('role');
     t.nonNull.string('status');
     t.nonNull.string('plan');
     t.json('name');
+    t.string('username');
     t.json('avatar');
     t.string('bio');
     t.string('shortBio');

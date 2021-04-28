@@ -11,6 +11,7 @@ datasource db {
 model User {
   id               String           @id @default(cuid())
   walletAddress    String           @unique
+  nonce            String           @default(uuid())
   email            String?
   encryptionKey    String
   role             UserRole         @default(user)
@@ -19,6 +20,7 @@ model User {
   sellerLevel      SellerLevel      @default(basic)
   buyerLevel       BuyerLevel       @default(basic)
   name             Json?
+  username         String?
   avatar           Json?
   bio              String?
   shortBio         String?
@@ -167,6 +169,7 @@ model GigOrder {
 
   @@index([gigId])
   @@index([buyerId])
+  @@index([status])
   @@index([deliveredAt])
 }
 

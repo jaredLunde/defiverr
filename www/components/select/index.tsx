@@ -1,14 +1,14 @@
-import * as React from 'react';
-import clsx from 'clsx';
+import useId from '@accessible/use-id';
 import * as Dropdown from '@radix-ui/react-dropdown-menu';
 import type {RadioGroupItemOwnProps} from '@radix-ui/react-radio-group';
 import useMergedRef from '@react-hook/merged-ref';
 import useSize from '@react-hook/size';
 import useSwitch from '@react-hook/switch';
-import useId from '@accessible/use-id';
-import {canTouch} from '@/utils/can-touch';
+import clsx from 'clsx';
+import * as React from 'react';
 import {resetVendorButtonStyles} from '@/components/button';
 import {styles} from '@/styles';
+import {canTouch} from '@/utils/can-touch';
 
 export const Select = Object.assign(
   React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
