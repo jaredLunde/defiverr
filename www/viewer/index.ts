@@ -19,7 +19,7 @@ const useViewerStore = createImmerStore({
   }),
 
   mutations: {
-    setViewer(draft, payload: (Viewer & {token?: string}) | null) {
+    setViewer(draft, payload: (Viewer & {token?: string}) | null = null) {
       if (!payload) {
         if (draft.data) {
           draft.data = payload;
@@ -38,13 +38,13 @@ const useViewerStore = createImmerStore({
       }
     },
 
-    setError(draft, value: CombinedError | null) {
+    setError(draft, value: CombinedError | null = null) {
       draft.status = 'error';
       // @ts-expect-error
       draft.error = value;
     },
 
-    setStatus(draft, value: Status) {
+    setStatus(draft, value: Status = 'idle') {
       if (
         draft.status !== 'idle' &&
         draft.status !== 'fetching' &&
@@ -92,7 +92,7 @@ export const useViewer = Object.assign(
         // TODO: Handle the new accounts, or lack thereof.
         // "accounts" will always be an array, but it can be empty.
         const viewer = useViewerStore.getState().data;
-
+        if (!viewer) return;
         if ((!accounts[0] && viewer) || accounts[0] !== viewer?.walletAddress) {
           logout();
         }
@@ -113,9 +113,11 @@ export const useViewer = Object.assign(
     const store = useViewerStore.getState();
     // Reauthenticates if the viewer state has likely changed or hasn't
     // been fetched at all
-    if (!store.data) {
-      authenticate();
-    }
+    React.useEffect(() => {
+      if (!store.data) {
+        authenticate();
+      }
+    }, []);
     // Logs the user out if they are no longer using their MetaMask wallet
     if (!hasMetaMask() && store.data) {
       logout();
@@ -147,8 +149,10 @@ if (typeof window !== 'undefined') {
 }
 
 export async function logout() {
-  useViewerStore.dispatch('clear', {});
+  useViewerStore.dispatch('setStatus', 'fetching');
+  useViewerStore.dispatch('clear');
   const res = await fetch('/api/logout');
+  useViewerStore.dispatch('setStatus', 'success');
 
   if (res.ok && typeof window !== 'undefined') {
     window.location.reload();

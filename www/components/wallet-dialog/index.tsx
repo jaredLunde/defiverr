@@ -9,7 +9,7 @@ import {Icon} from '@/components/icon';
 import {Link} from '@/components/link';
 import {withUrqlClient} from '@/graphql/client';
 import {useUrqlError} from '@/graphql/errors';
-import {useLogInMutation} from '@/graphql/hooks';
+import {useLogInMutation, useVerifySignatureMutation} from '@/graphql/hooks';
 import {mq, styles} from '@/styles';
 import {box, column, layer} from '@/styles/layout';
 import {text} from '@/styles/text';
@@ -23,17 +23,23 @@ export const WalletDialog = withUrqlClient(function WalletDialog({
   children,
 }: WalletDialogProps) {
   const [logInMutation, logIn] = useLogInMutation();
+  const [
+    verifySignatureMutation,
+    verifySignature,
+  ] = useVerifySignatureMutation();
   const [requesting, requestAccounts] = useAsync(async () => {
     const eth = new Eth(Eth.givenProvider);
-    const account: string = eth.accounts[0];
+    const accounts = await eth.requestAccounts();
+    const account = accounts[0];
 
     if (account) {
       const {data} = await logIn({walletAddress: account});
 
       if (data && data.logIn) {
-        const msg = `Welcome to defivver! Sign this message to prove you have access to this wallet. This won’t cost you any Ether.\n\nTo stop hackers from using your wallet, here’s a unique message ID they can’t guess: ${data.logIn.nonce}`;
+        const message = `Clicking "Sign" below\n • proves this is your wallet \n • is absolutely free\n\n{nonce}`;
+        const msg = message.replace('{nonce}', data.logIn.nonce);
         const signature = await eth.personal.sign(msg, account);
-        console.log('Signature!', signature);
+        return verifySignature({walletAddress: account, signature, message});
       }
     }
 
@@ -47,11 +53,16 @@ export const WalletDialog = withUrqlClient(function WalletDialog({
     },
   });
 
+  useUrqlError(verifySignatureMutation);
+
   React.useEffect(() => {
-    // if (logInMutation.data?.logIn) {
-    //   useViewer.dispatch('setViewer', logInMutation.data.logIn as any);
-    // }
-  }, [logInMutation.data?.logIn]);
+    if (verifySignatureMutation.data?.verifySignature) {
+      useViewer.dispatch(
+        'setViewer',
+        verifySignatureMutation.data.verifySignature as any
+      );
+    }
+  }, [verifySignatureMutation.data?.verifySignature]);
 
   return (
     <Dialog.Root
@@ -95,7 +106,7 @@ export const WalletDialog = withUrqlClient(function WalletDialog({
             className={clsx(
               box({width: 300}),
               text({
-                size: 'xs',
+                size: 'sm',
                 color: 'textAccent',
                 weight: '500',
                 leading: 'snug',
@@ -197,7 +208,7 @@ const providerButton = styles.one(
       justifyContent: 'center',
       padding: t.pad.md,
       // border: `${t.borderWidth.hairline} solid ${t.color.blueGray300}`,
-      backgroundColor: t.color.indigo600,
+      backgroundColor: t.color.primary,
       borderRadius: t.radius.full,
       color: t.color.white,
       fontSize: t.font.size.base,

@@ -1,21 +1,16 @@
 import {GetStaticProps} from 'next';
 import Head from 'next/head';
 import * as React from 'react';
-import {FormattedMessage} from 'react-intl';
 import {Button} from '@/components/button';
 import {GigCard} from '@/components/gig-card';
 import {Hero} from '@/components/hero';
 import {withUrqlClient} from '@/graphql/client';
 import {cluster, column, grid} from '@/styles/layout';
 import {text} from '@/styles/text';
-import {useViewer} from '@/viewer';
 
 export default withUrqlClient(Home);
 
 function Home() {
-  const fetching = useViewer((state) => state.fetching);
-  const loggedIn = useViewer((state) => !!state.data);
-
   return (
     <main>
       <Head>
@@ -36,13 +31,13 @@ function Home() {
               className={text({
                 size: {min: '4xl', sm: '5xl', md: '6xl'},
                 color: 'blueGray900',
-                tracking: 'tighter',
+                tracking: 'tight',
                 leading: 'tight',
-                weight: '600',
+                weight: '700',
                 align: 'center',
               })}
             >
-              Hire the best freelance talent in the world
+              Pay for your next project with crypto
             </h1>
 
             <h2
@@ -60,8 +55,8 @@ function Home() {
 
           <div>
             <div className={cluster({gap: 'lg', distribute: 'center'})}>
-              <Button size='md'>Find a professional</Button>
-              <Button size='md' variant='secondary'>
+              <Button size='lg'>Find a professional</Button>
+              <Button size='lg' variant='secondary'>
                 Get paid in crypto
               </Button>
             </div>
@@ -71,7 +66,7 @@ function Home() {
 
       <div
         className={grid({cols: 5, gap: 'xl', pad: 'lg'})}
-        style={{marginTop: -140}}
+        style={{marginTop: -160}}
         itemProp='itemList'
         itemScope
         itemType='http://schema.org/ItemList'

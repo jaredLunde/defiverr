@@ -278,6 +278,7 @@ export const selectStyles = styles({
       borderRadius: t.radius.primary,
       backgroundColor: t.color.bodyBg,
       border: `${t.borderWidth.hairline} solid ${t.color.accent}`,
+      boxShadow: t.shadow.sm,
       width: '100%',
       height: '100%',
       textAlign: 'left',
@@ -301,27 +302,24 @@ export const selectStyles = styles({
   menu: (t) => ({
     backgroundColor: t.color.bodyBg,
     border: `${t.borderWidth.hairline} solid ${t.color.accent}`,
+    borderRadius: t.radius.primary,
     boxShadow: t.shadow.sm,
     overflow: 'auto',
     maxHeight: '80vh',
-    zIndex: t.zIndexes.max,
+    zIndex: t.zIndex.max,
 
     '&[data-side="top"]': {
-      borderRadius: `${t.radius.primary} ${t.radius.primary} 0 0`,
-      bottom: `calc(-1 * ${t.radius.primary})`,
+      bottom: t.gap.sm,
 
       '> *:first-child': {
-        borderRadius: `${t.radius.primary} ${t.radius.primary} 0 0`,
         overflow: 'hidden',
       },
     },
 
     '&[data-side="bottom"]': {
-      borderRadius: `0 0 ${t.radius.primary} ${t.radius.primary}`,
-      top: `calc(-1 * ${t.radius.primary})`,
+      top: t.gap.sm,
 
       '> *:last-child': {
-        borderRadius: `0 0 ${t.radius.primary} ${t.radius.primary}`,
         overflow: 'hidden',
       },
     },
@@ -364,7 +362,7 @@ export const selectStyles = styles({
           bottom: 0,
           right: 'auto',
           backgroundColor: t.color.primary,
-          width: 4,
+          width: 3,
         },
       },
     },

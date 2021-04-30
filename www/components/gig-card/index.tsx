@@ -80,6 +80,7 @@ export function GigCard({style, title, src}: any) {
 
         <h3 className={text({size: 'lg', leading: 'snug'})}>{title}</h3>
         <h4 className={clsx(text({size: 'sm', leading: 'normal'}))}>
+          in <b className={text({weight: '600'})}>3 days </b>
           for <b className={text({weight: '600'})}>2.00 ETH</b>
         </h4>
       </div>

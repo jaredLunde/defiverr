@@ -36,6 +36,34 @@ mutation logIn($walletAddress: String!) {
   }
 }
 
+mutation verifySignature(
+  $walletAddress: String!
+  $signature: String!
+  $message: String!
+) {
+  verifySignature(
+    walletAddress: $walletAddress
+    signature: $signature
+    message: $message
+  ) {
+    id
+    walletAddress
+    nonce
+    email
+    role
+    status
+    plan
+    username
+    name
+    avatar
+    bio
+    shortBio
+    homepage
+    location
+    createdAt
+  }
+}
+
 mutation updateProfile(
   $id: String!
   $name: String

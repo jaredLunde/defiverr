@@ -5,9 +5,24 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import type {JwtData} from '@/graphql/api/jwt';
 import {jwtConfig, jwtCookieName} from '@/graphql/api/jwt';
 
-const prismaClient = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', `warn`, `error`] : [],
-});
+let prismaClient: PrismaClient;
+
+if (process.env.NODE_ENV === 'production') {
+  prismaClient = new PrismaClient({
+    log: [],
+  });
+} else {
+  // @ts-expect-error
+  if (!global.prisma) {
+    // @ts-expect-error
+    global.prisma = new PrismaClient({
+      log: ['query', `warn`, `error`],
+    });
+  }
+
+  // @ts-expect-error
+  prismaClient = global.prisma;
+}
 
 export function secretsMiddleware(
   req: NextApiRequest,

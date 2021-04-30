@@ -16,9 +16,20 @@ export const box = compoundStyles({
   display: responsiveStyles({
     flex: {display: 'flex'},
     inlineFlex: {display: 'inline-flex'},
+    grid: {display: 'grid'},
+    inlineGrid: {display: 'inlineGrid'},
     block: {display: 'block'},
     inlineBlock: {display: 'inline-block'},
     inline: {display: 'inline'},
+    table: {display: 'table'},
+    tableCell: {display: 'table-cell'},
+    tableRowGroup: {display: 'table-row-group'},
+    tableRow: {display: 'table-row'},
+    tableColumn: {display: 'table-column'},
+    tableColumnGroup: {display: 'table-column-group'},
+    tableHeader: {display: 'table-header'},
+    tableHeaderGroup: {display: 'table-header-group'},
+    tableFooterGroup: {display: 'table-footer-group'},
     none: {display: 'none'},
   }),
   /**
@@ -458,7 +469,7 @@ const sharedGrid = compoundStyles({
     let rows: (number | string)[];
     if (Array.isArray(value)) rows = value;
     // ie doesn't have repeat
-    else rows = new Array(value).fill('1fr');
+    else rows = [`repeat(${value},minmax(0,1fr))`];
     return {gridTemplateRows: rows.map((row) => unit(row)).join(' ')};
   }),
 });
@@ -488,7 +499,7 @@ export const grid = compoundStyles({
     let columns: (number | string)[];
     if (Array.isArray(value)) columns = value;
     // ie doesn't have repeat
-    else columns = new Array(value).fill('1fr');
+    else columns = [`repeat(${value},minmax(0,1fr))`];
     return {gridTemplateColumns: columns.map((col) => unit(col)).join(' ')};
   }),
   ...sharedGrid.styles,

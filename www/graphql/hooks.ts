@@ -41,6 +41,7 @@ export type BaseViewer = {
 export type Mutation = {
   __typename?: 'Mutation';
   logIn?: Maybe<Viewer>;
+  verifySignature?: Maybe<Viewer>;
   authenticate?: Maybe<Viewer>;
   updateProfile?: Maybe<Viewer>;
   updateEmail?: Maybe<Viewer>;
@@ -48,6 +49,12 @@ export type Mutation = {
 
 export type MutationLogInArgs = {
   walletAddress: Scalars['String'];
+};
+
+export type MutationVerifySignatureArgs = {
+  walletAddress: Scalars['String'];
+  signature: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type MutationUpdateProfileArgs = {
@@ -127,6 +134,35 @@ export type LogInMutationVariables = Exact<{
 
 export type LogInMutation = {__typename?: 'Mutation'} & {
   logIn?: Maybe<
+    {__typename?: 'Viewer'} & Pick<
+      Viewer,
+      | 'id'
+      | 'walletAddress'
+      | 'nonce'
+      | 'email'
+      | 'role'
+      | 'status'
+      | 'plan'
+      | 'username'
+      | 'name'
+      | 'avatar'
+      | 'bio'
+      | 'shortBio'
+      | 'homepage'
+      | 'location'
+      | 'createdAt'
+    >
+  >;
+};
+
+export type VerifySignatureMutationVariables = Exact<{
+  walletAddress: Scalars['String'];
+  signature: Scalars['String'];
+  message: Scalars['String'];
+}>;
+
+export type VerifySignatureMutation = {__typename?: 'Mutation'} & {
+  verifySignature?: Maybe<
     {__typename?: 'Viewer'} & Pick<
       Viewer,
       | 'id'
@@ -236,6 +272,42 @@ export const LogInDocument = gql`
 
 export function useLogInMutation() {
   return Urql.useMutation<LogInMutation, LogInMutationVariables>(LogInDocument);
+}
+export const VerifySignatureDocument = gql`
+  mutation verifySignature(
+    $walletAddress: String!
+    $signature: String!
+    $message: String!
+  ) {
+    verifySignature(
+      walletAddress: $walletAddress
+      signature: $signature
+      message: $message
+    ) {
+      id
+      walletAddress
+      nonce
+      email
+      role
+      status
+      plan
+      username
+      name
+      avatar
+      bio
+      shortBio
+      homepage
+      location
+      createdAt
+    }
+  }
+`;
+
+export function useVerifySignatureMutation() {
+  return Urql.useMutation<
+    VerifySignatureMutation,
+    VerifySignatureMutationVariables
+  >(VerifySignatureDocument);
 }
 export const UpdateProfileDocument = gql`
   mutation updateProfile(

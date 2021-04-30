@@ -1,4 +1,5 @@
 export function canTouch() {
+  if (typeof window === 'undefined') return false;
   if (cachedCanTouch !== void 0) {
     return cachedCanTouch;
   }

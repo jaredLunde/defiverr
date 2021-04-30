@@ -72,6 +72,7 @@ function GlobalStyles() {
       },
       html: {
         fontSize: '100%',
+        overflowX: 'hidden',
 
         ':focus-within': {
           scrollBehavior: 'smooth',
@@ -82,7 +83,6 @@ function GlobalStyles() {
         minHeight: '100%',
         backgroundColor: color.bodyBg,
         fontFamily: font.family.sans,
-        overflowX: 'hidden',
       },
       '.loud': {
         transitionProperty: 'opacity,visibility',

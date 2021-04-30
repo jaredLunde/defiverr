@@ -96,11 +96,12 @@ export const button = responsiveStyles({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    letterSpacing: font.tracking.tight,
     lineHeight: font.leading.none,
     userSelect: 'none',
     fontSize: font.size.sm,
     fontWeight: 600,
-    padding: `${10 / 16}rem ${14 / 16}rem`,
+    padding: `${10 / 16}rem ${16 / 16}rem`,
     borderRadius: radius.primary,
     transitionProperty: 'background-color, box-shadow',
     transitionDuration: transition.duration.fast,
@@ -163,11 +164,13 @@ export const button = responsiveStyles({
 
   md: ({font}) => ({
     fontSize: font.size.base,
-    padding: `${14 / 16}rem ${22 / 16}rem`,
+    fontWeight: 500,
+    padding: `${16 / 16}rem ${22 / 16}rem`,
   }),
 
   lg: ({font}) => ({
     fontSize: font.size.lg,
+    fontWeight: 500,
     padding: `${22 / 16}rem ${30 / 16}rem`,
   }),
 });

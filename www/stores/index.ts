@@ -43,7 +43,7 @@ function immer<S extends State, M extends MutationTypes>(
       MutationPayload extends M[MutationType]
     >(
       type: MutationType,
-      payload: MutationPayload
+      payload?: MutationPayload
     ) => {
       api.setState((state) => {
         mutations[type](state, payload);
@@ -123,7 +123,7 @@ export function persistImmer<S extends State, M extends MutationTypes>(
       MutationPayload extends M[MutationType]
     >(
       type: MutationType,
-      payload: MutationPayload
+      payload?: MutationPayload
     ) => {
       persistSet((state) => {
         mutations[type](state, payload);
@@ -145,7 +145,7 @@ interface UseImmerStore<S extends State, M extends MutationTypes>
     MutationPayload extends M[MutationType]
   >(
     type: MutationType,
-    payload: MutationPayload
+    payload?: MutationPayload
   ): void;
 }
 
@@ -156,7 +156,7 @@ type StoreApiWithDispatch<S extends State, M extends MutationTypes> = Omit<
   setState(fn: (draft: Draft<S>) => void): void;
   dispatch<MutationType extends keyof M = keyof M>(
     type: MutationType,
-    payload: M[MutationType]
+    payload?: M[MutationType]
   ): void;
 };
 
@@ -217,11 +217,11 @@ type PersistAtomStorageValue<Value> = {version: number; value: Value};
 type MutationTypes = Record<string, unknown>;
 type MutationsMap<S extends State, M extends MutationTypes> =
   | {
-      [Type in keyof M]: (state: Draft<S>, payload: M[Type]) => S | void;
+      [Type in keyof M]: (state: Draft<S>, payload?: M[Type]) => S | void;
     }
   | ((
       set: (draft: Draft<S>) => void,
       get: GetState<S>
     ) => {
-      [Type in keyof M]: (state: Draft<S>, payload: M[Type]) => S | void;
+      [Type in keyof M]: (state: Draft<S>, payload?: M[Type]) => S | void;
     });

@@ -471,13 +471,13 @@ export const tokens = {
     translucentContrast: 'rgba(40, 40, 48, 0.15)',
     bodyBg: colorSystem.white,
 
-    text: colorSystem.blueGray800,
+    text: colorSystem.blueGray900,
     textAccent: colorSystem.blueGray600,
     textAccentLight: colorSystem.blueGray400,
 
-    primary: colorSystem.indigo500,
-    primaryHover: colorSystem.indigo700,
-    primaryActive: colorSystem.indigo800,
+    primary: colorSystem.indigo700,
+    primaryHover: colorSystem.indigo800,
+    primaryActive: colorSystem.indigo900,
 
     secondary:
       'hsl(224.7457627118644, 54.128440366972484%, 18.372549019607842%)',
@@ -486,7 +486,7 @@ export const tokens = {
     secondaryActive:
       'hsl(224.7457627118644, 54.128440366972484%, 21.372549019607842%)',
 
-    accent: 'hsl(252, 58%, 95%)',
+    accent: 'hsl(252, 58%, 92%)',
     accentHover: 'hsl(212, 34%, 82%)',
     accentActive: 'hsl(212, 34%, 84%)',
   },

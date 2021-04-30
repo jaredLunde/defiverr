@@ -1,9 +1,11 @@
 import crypto from 'crypto';
+import * as sigUtil from 'eth-sig-util';
+import * as ethUtil from 'ethereumjs-util';
 import human from 'humanparser';
 import joi from 'joi';
 import * as jwt from 'jsonwebtoken';
 import * as nexus from 'nexus';
-import web3 from 'web3';
+import {v4 as uuid} from 'uuid';
 import {jwtConfig, jwtCookieName} from '@/graphql/api/jwt';
 import type {JwtData} from '@/graphql/api/jwt';
 import * as cookies from '@/graphql/api/utils/cookies';
@@ -22,7 +24,7 @@ export const logIn = nexus.mutationField('logIn', {
       .string()
       .custom((address, helpers) =>
         is.truthy(
-          web3.utils.isAddress(address),
+          ethUtil.isValidAddress(address),
           errorCode.wallet.invalidAddress
         )(address, helpers)
       )
@@ -64,6 +66,70 @@ export const logIn = nexus.mutationField('logIn', {
       }
     );
       */
+    return viewer;
+  },
+});
+
+export const verifySignature = nexus.mutationField('verifySignature', {
+  type: Viewer,
+
+  args: {
+    walletAddress: nexus.nonNull(nexus.stringArg()),
+    signature: nexus.nonNull(nexus.stringArg()),
+    message: nexus.nonNull(nexus.stringArg()),
+  },
+
+  validate: joi.object({
+    walletAddress: joi
+      .string()
+      .custom((address, helpers) =>
+        is.truthy(
+          ethUtil.isValidAddress(address),
+          errorCode.wallet.invalidAddress
+        )(address, helpers)
+      )
+      .messages(messages),
+    signature: joi.string().messages(messages),
+    message: joi.string().messages(messages),
+  }),
+
+  async resolve(source, {walletAddress, message, signature}, {req, res, db}) {
+    const viewer = await db.user.findUnique({where: {walletAddress}});
+
+    if (!viewer) {
+      throw new Error('Could not find a user with this wallet address');
+    }
+    // We now are in possession of msg, publicAddress and signature. We
+    // will use a helper from eth-sig-util to extract the address from the signature
+    const msgBufferHex = ethUtil.bufferToHex(
+      Buffer.from(message.replace('{nonce}', viewer.nonce), 'utf8')
+    );
+    const address = sigUtil.recoverPersonalSignature({
+      data: msgBufferHex,
+      sig: signature,
+    });
+
+    if (address.toLowerCase() !== walletAddress.toLowerCase()) {
+      throw new Error('Invalid signature');
+    }
+
+    await db.user.update({where: {id: viewer.id}, data: {nonce: uuid()}});
+    const jwtData: JwtData = {id: viewer.id};
+
+    cookies.set(
+      res,
+      jwtCookieName,
+      jwt.sign(jwtData, req.secrets.jwt, {
+        ...jwtConfig,
+        expiresIn: '30d',
+      }),
+      {
+        maxAge: 30 * 24 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+      }
+    );
+
     return viewer;
   },
 });
